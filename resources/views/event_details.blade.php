@@ -99,7 +99,7 @@
                         <p style="font-size: 18px; margin-left: 5px; margin-top: -10px">By: <a
                                     href="/view_profile?user_id={{($event->event_organizer)->user_id}}">{{($event->event_organizer)->display_name}}</a>
                         </p>
-                        @if($is_register == false)
+                        @if($is_register == false && $event->participant_registration == 1)
                             <form action="participant_registration_form" method="get">
 
                                 <a href="#" onclick="$(this).closest('form').submit()">
