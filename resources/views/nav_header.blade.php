@@ -7,7 +7,15 @@
         <ul class="nav navbar-nav">
             <li id="home"><a href="/home">Home</a></li>
             <!--            <li id="search"><a href="/search">Search</a></li>-->
-            <li id="dashboard"><a href="/create_event">Dashboard</a></li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Dashboard
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="create_event"><a href="create_event">Create Event</a></li>
+                    <li id="my_event"><a href="my_event">My Events</a></li>
+                    <li id="event_location"><a href="search_event_location">Event Locations</a></li>
+                </ul>
+            </li>
             <li id="participant_status"><a href="participant_status">Participant Status</a></li>
             <li id="vacancy"><a href="vacancy">Vacancy</a></li>
             <li id="sponsorship"><a href="sponsorship">Sponsorship</a></li>
@@ -20,13 +28,13 @@
         </ul>
     </div>
 
-    <ul id="dashboard_nav_bar" class="nav nav-pills nav-justified justify-content-center"
-        style="margin-top: 1%; display: none;">
-        <li id="create_event"><a href="/create_event">Create Event</a></li>
-        <!--        <li id="broadcast_news"><a href="/broadcast_news">Broadcast News</a></li>-->
-        <li id="manage_event"><a href="/manage_event">Manage Event</a></li>
-        <li id="event_location"><a href="/search_event_location">Event Location</a></li>
-    </ul>
+    {{--<ul id="dashboard_nav_bar" class="nav nav-pills nav-justified justify-content-center"--}}
+        {{--style="margin-top: 1%; display: none;">--}}
+        {{--<li id="create_event"><a href="/create_event">Create Event</a></li>--}}
+        {{--<!--        <li id="broadcast_news"><a href="/broadcast_news">Broadcast News</a></li>-->--}}
+        {{--<li id="manage_event"><a href="/manage_event">Manage Event</a></li>--}}
+        {{--<li id="event_location"><a href="/search_event_location">Event Location</a></li>--}}
+    {{--</ul>--}}
 </nav>
 
 <script>

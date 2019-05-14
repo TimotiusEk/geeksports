@@ -5,10 +5,6 @@
     @include('nav_header')
     <?php include 'php/datatables.php'; ?>
     <script>
-        $("#dashboard_nav_bar").show();
-        document.getElementById("manage_event").className = 'active';
-        document.getElementById("dashboard").className = 'active';
-
         $(document).ready(function () {
             $("#common").attr("disabled", "disabled");
         });
@@ -39,7 +35,7 @@
 
                         @for($idx = 0 ; $idx < count($companies) ; $idx++)
                             @if($status[$user_idx] == null)
-                                <input type="hidden" name="user_id[]" value="{{($companies[$idx])->user_id}}"/>
+                                <input type="hidden" name="company_id[]" value="{{($companies[$idx])->id}}"/>
                                 @php $user_idx++; @endphp
                             @endif
                         @endfor
@@ -83,48 +79,48 @@
 <table style="width: 98%; margin-left: 1%; margin-right: 1%; margin-top: 2%">
     <tr>
         <td>
-            <form action="/broadcast_package" method="post">
-                {{csrf_field()}}
-                @if(is_array($industry_id) && count($industry_id) != 0)
-                    @foreach($industry_id as $id )
-                        <input type="hidden" name="industry_id[]" value="{{$id}}"/>
-                    @endforeach
-                @endif
-                <div class="container">
-                    <div class="row">
-                        @php $industry_idx = 0;@endphp
-                        @php $status_idx = 0;@endphp
-                        @foreach($companies_collection as $companies)
+            <div class="container">
+                <div class="row">
+                    @php $industry_idx = 0;@endphp
+                    @php $status_idx = 0;@endphp
+                    @foreach($companies_collection as $companies)
+                        @for($idx = 0 ; $idx < count($companies) ; $idx++)
 
-                            @for($idx = 0 ; $idx < count($companies) ; $idx++)
-                                <div class="col-md-2"
-                                     style="background-color: #eaffea; border-radius: 5px; border: 1px outset #18253d;width: 500px; margin: 1%; padding: 1%">
-                                    <div align="center">
-                                        <a href="view_profile?user_id={{($companies[$idx])->user_id}}">
-                                            <img src="/images/company_logo/{{($companies[$idx])->company_logo}}"
-                                                 width="100px" height="100px"/>
-                                        </a>
-                                    </div>
-                                    <div align="center" style="font-size: 22px; margin-top: 10px;">
-                                        <b><a href="view_profile?user_id={{($companies[$idx])->user_id}}"
-                                              style="color: black">{{($companies[$idx])->company_name}}</a></b>
+                            <div class="col-md-2"
+                                 style="background-color: #eaffea; border-radius: 5px; border: 1px outset #18253d;width: 500px; margin: 1%; padding: 1%">
+                                <div align="center">
+                                    <a href="view_profile?user_id={{($companies[$idx])->user_id}}">
+                                        <img src="/images/company_logo/{{($companies[$idx])->company_logo}}"
+                                             width="100px" height="100px"/>
+                                    </a>
+                                </div>
+                                <div align="center" style="font-size: 22px; margin-top: 10px;">
+                                    <b><a href="view_profile?user_id={{($companies[$idx])->user_id}}"
+                                          style="color: black">{{($companies[$idx])->company_name}}</a></b>
 
-                                    </div>
+                                </div>
 
-                                    <div align="center" style="font-size: 15px; margin-top: 5px;">
-                                        @if(count($industries) != 0)
-                                            {{$industries[$industry_idx]}}
-                                            @php $industry_idx++; @endphp
+                                <div align="center" style="font-size: 15px; margin-top: 5px;">
+                                    @if(count($industries) != 0)
+                                        {{$industries[$industry_idx]}}
+                                        @php $industry_idx++; @endphp
+                                    @endif
+                                </div>
+
+                                <div align="center" style="margin-top: 30px">
+                                    <form action="/broadcast_package" method="post">
+                                        {{csrf_field()}}
+
+                                        @if(is_array($industry_id) && count($industry_id) != 0)
+                                            @foreach($industry_id as $id )
+                                                <input type="hidden" name="industry_id[]" value="{{$id}}"/>
+                                            @endforeach
                                         @endif
-                                    </div>
-
-                                    <div align="center" style="margin-top: 30px">
-
 
                                         @if($keyword != "")
                                             <input type="hidden" name="keyword" value="{{$keyword}}"/>
                                         @endif
-                                        <input type="hidden" name="user_id"
+                                        <input type="hidden" name="company_id"
                                                value="{{($companies[$idx])->id}}"/>
                                         <input type="hidden" name="event_id" value="{{$event_id}}"/>
                                         <input type="hidden" name="event_information" value="{{$event_information}}"/>
@@ -137,16 +133,17 @@
                                             <button type="submit" class="form-control btn btn-dark" disabled><b>Broadcasted</b>
                                             </button>
                                         @endif
-                                        @php $status_idx++; @endphp
+                                    </form>
+                                    @php $status_idx++; @endphp
 
-                                    </div>
                                 </div>
-                            @endfor
-                        @endforeach
+                            </div>
 
-                    </div>
+                        @endfor
+                    @endforeach
                 </div>
-            </form>
+            </div>
+
         </td>
     </tr>
 </table>

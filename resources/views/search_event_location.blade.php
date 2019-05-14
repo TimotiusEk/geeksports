@@ -5,9 +5,6 @@
     @include('nav_header')
 
     <script>
-        $("#dashboard_nav_bar").show();
-
-        document.getElementById("dashboard").className = 'active';
         document.getElementById("event_location").className = 'active';
     </script>
 </head>

@@ -5,9 +5,7 @@
     @include('nav_header')
     <?php include 'php/datatables.php'; ?>
     <script>
-        $("#dashboard_nav_bar").show();
-        document.getElementById("manage_event").className = 'active';
-        document.getElementById("dashboard").className = 'active';
+        document.getElementById("my_event").className = 'active';
 
         $(document).ready(function () {
             $("#common").attr("disabled", "disabled");
@@ -110,18 +108,18 @@
 <body>
 
 
-<table id="table_id" class="cell-border table-bordered" width="99%" >
+<table id="table_id" class="cell-border table-bordered" width="99%">
     <thead>
     <tr>
-        <th>Event</th>
+        <th>My Event</th>
         {{--<th>City</th>--}}
         {{--<th>Date</th>--}}
         {{--<th>Games</th>--}}
         {{--<th>Event Details</th>--}}
         {{--<th>Participant Registration</th>--}}
         {{--<th>Brochure</th>--}}
-        <th>Status</th>
-        <th></th>
+        {{--<th>Status</th>--}}
+        {{--<th></th>--}}
     </tr>
     </thead>
     <tbody>
@@ -130,33 +128,50 @@
         <tr>
             <td id="event_name_{{$idx + 1}}">
                 <div class="container"
-                     style="background-color: white; border-radius: 10px; border-color: #491217; width: 99%; margin: 1%; padding: 1%">
+                     style="background-color: white; border-radius: 10px; border-color: #491217; width: 100%;">
                     <div class="row">
                         <div class="col-md-3 text-center"><img
-                                    style=" height: 230px; width: 320px; border-radius: 10px; margin-left: -5px; margin-top: 15px;"
+                                    style=" height: 230px; width: 320px; border-radius: 10px; margin-left: -5px; margin-top: 35px;"
                                     src="/images/event_brochure/{{($events[$idx])->brochure}}"/></div>
-                        <div class="col-md-9" style="font-size: 40px; vertical-align: top;">
+                        <div class="col-md-9" style="font-size: 40px; vertical-align: top; padding: 3%">
                             <div style="margin-left: 70px">
 
                                 <div class="row">
-                                    <div class="col-md-10" style="margin-top: 15px">
+                                    <div class="col-md-7">
                                         <b><a
-                                                    href="/event_details?event_id={{($events[$idx])->id}}">{{($events[$idx])->name}}</a>
+                                                    href="/event_details?event_id={{($events[$idx])->id}}" style="color: black">{{($events[$idx])->name}}</a>
                                         </b>
                                     </div>
-                                    <div class="col-md-2" align="right">
+                                    <div class="col-md-5" align="right">
+                                        <span style="float: right">
+                                        <a href="#myModal"
+                                           onclick="showModal('{{($events[$idx])->name}}', '{{($events[$idx])->id}}')"
+                                           data-toggle="modal"><img
+                                                    src="/images/delete_btn.png"
+                                                    style="width: 100px; height: 40px;"/></a>
+                                        </span>
+
+                                        <span style="float: right">
                                         <form action="update_event_form" method="post">
                                             {{csrf_field()}}
                                             <input type="hidden" value="{{($events[$idx])->id}}" name="event_id"/>
                                             <a href="#" onclick="$(this).closest('form').submit()"><img
                                                         src="/images/edit_btn.png"
-                                                        style="width: 95px; height: 40px;"/>
+                                                        style="width: 100px; height: 40px; margin-right: 10px"/>
                                             </a>
                                         </form>
-                                        <a href="#myModal" onclick="showModal('{{($events[$idx])->name}}', '{{($events[$idx])->id}}')"
-                                           data-toggle="modal"><img
-                                                    src="/images/delete_btn.png"
-                                                    style="width: 95px; height: 40px; margin-top: -30px; margin-bottom: 30px"/></a>
+                                        </span>
+
+                                        <span style="float: right">
+                                        <form action="manage_participant" method="post">
+                                            {{csrf_field()}}
+                                            <input type="hidden" value="{{($events[$idx])->id}}" name="event_id"/>
+                                            <a href="#" onclick="$(this).closest('form').submit()"><img
+                                                        src="/images/manage_btn.png"
+                                                        style="width: 100px; height: 40px; margin-right: 10px"/>
+                                            </a>
+                                        </form>
+                                            </span>
 
                                     </div>
                                 </div>
@@ -165,10 +180,8 @@
                                 </div>
 
 
-
-
                                 <div style="font-size: 23px; margin-top: 10px"><img src="images/ic_location.png"
-                                                                                     style="width: 30px; margin-right: 10px; margin-bottom: 10px;"> @if($city_name[$idx] != null){{$city_name[$idx]}} @else
+                                                                                    style="width: 30px; margin-right: 10px; margin-bottom: 10px;"> @if($city_name[$idx] != null){{$city_name[$idx]}} @else
                                         - @endif
                                 </div>
                                 <div style="font-size: 23px; margin-bottom: 10px"><img src="images/ic_datetime.png"
@@ -186,89 +199,7 @@
             </td>
 
 
-            {{--<td>@if(($events[$idx])->city_id != null){{$city_name[$idx]}} @else - @endif</td>--}}
-            {{--            <td id="date_{{$idx + 1}}">{{($events[$idx])->start_date}} - {{($events[$idx])->end_date}}</td>--}}
-            {{--<td>@if($games[$idx] != null){{$games[$idx]}} @else - @endif</td>--}}
-            {{--            <td>@if(($events[$idx])->details != null){{($events[$idx])->details}} @else - @endif</td>--}}
-            {{--<td>@if(($events[$idx])->participant_registration != null && ($events[$idx])->participant_registration == true)--}}
-            {{--<form action="manage_participant" method="post">--}}
-            {{--{{csrf_field()}}--}}
-            {{--<input type="hidden" name="event_id" value="{{($events[$idx])->id}}"/>--}}
-            {{--<input type="hidden" name="event_information"--}}
-            {{--value="{{($events[$idx])->name}} ({{($events[$idx])->start_date}} - {{($events[$idx])->end_date}})"/>--}}
-            {{--<button class="btn btn-primary"><b>Manage Participants</b></button>--}}
-            {{--</form>--}}
-            {{--@else--}}
-            {{--Closed--}}
-            {{--@endif--}}
-            {{--</td>--}}
-            {{--<td>@if(($events[$idx])->brochure == null) - @else <img--}}
-            {{--src="/images/event_brochure/{{($events[$idx])->brochure}}" id="{{($events[$idx])->id}}"--}}
-            {{--style="display: none" alt="{{($events[$idx])->name}} Brochure"/><a href="#"--}}
-            {{--onclick="showBrochure('{{($events[$idx])->id}}')">View--}}
-            {{--Brochure</a>@endif</td>--}}
-            <td class="center">{{($events[$idx])->status}}
-            <td class="center" valign="center">
-
-
-
-                <form action="manage_participant" method="post" style="margin-left: 2px; margin-bottom: -5px">
-                    {{csrf_field()}}
-                    <input type="hidden" name="event_id" value="{{($events[$idx])->id}}"/>
-                    <a href="#" onclick="$(this).closest('form').submit()"><img src="/images/ic_participants.png"
-                                                                                style="width: 100px; height: 70px;"/></a>
-                </form>
-                <form action="manage_vacancy" method="post" style="margin-bottom: -10px">
-                    {{csrf_field()}}
-                    <input type="hidden" value="{{($events[$idx])->id}}" name="event_id"/>
-                    <a href="#" onclick="$(this).closest('form').submit()"><img src="/images/ic_vacancy.png"
-                                                                                style="width: 65px; height: 45px;"/></a>
-                </form>
-                <br>
-                <form action="manage_news" method="post"
-                      style="margin-bottom: -10px">
-                    {{csrf_field()}}
-                    <input type="hidden" value="{{($events[$idx])->id}}" name="event_id"/>
-                    <a href="#" onclick="$(this).closest('form').submit()"><img src="/images/ic_manage_news.png"
-                                                                                style="width: 70px; height: 50px; margin-bottom: 10px; margin-left: 3px;"/></a>
-                </form>
-                <br>
-                <form action="manage_sponsorship_package" method="post" style="margin-left: 2px; margin-bottom: -10px">
-
-                    {{csrf_field()}}
-                    <input type="hidden" value="{{($events[$idx])->id}}" name="event_id"/>
-                    <a href="#" onclick="$(this).closest('form').submit()"><img
-                                src="/images/ic_manage_sponsorship_package.png"
-                                style="width: 100px; height: 68px;"/></a>
-                </form>
-                <br>
-                <form action="manage_streaming_channel" method="get" style="margin-left: 2px; margin-bottom: -10px">
-                    <input type="hidden" name="event_id" value="{{($events[$idx])->id}}"/>
-                    <a href="#" onclick="$(this).closest('form').submit()"><img src="/images/ic_streaming_channels.png"
-                                                                                style="width: 90px; height: 68px;"/></a>
-                </form>
-                @if(($events[$idx])->status == "Draft")
-                    <br>
-                    <form action="publish_event" method="post"
-                          style="margin-left: 2px; margin-bottom: -10px; margin-bottom: 10px">
-                        {{csrf_field()}}
-                        <input type="hidden" name="event_id" value="{{($events[$idx])->id}}"/>
-                        <a href="#" onclick="$(this).closest('form').submit()"><img src="/images/ic_publish.png"
-                                                                                    style="width: 80px; height: 50px; margin-left: 3px"/></a>
-                    </form>
-
-                @elseif(($events[$idx])->status == "Published")
-
-                    <br>
-                    <form action="unpublish_event" method="post"
-                          style="margin-left: 2px; margin-bottom: -10px; margin-bottom: 10px">
-                        {{csrf_field()}}
-                        <input type="hidden" name="event_id" value="{{($events[$idx])->id}}"/>
-                        <a href="#" onclick="$(this).closest('form').submit()"><img src="/images/ic_unpublish.png"
-                                                                                    style="width: 80px; height: 50px; margin-left: 3px"/></a>
-                    </form>
-                @endif
-            </td>
+            {{--<td class="center">{{($events[$idx])->status}}</td>--}}
         </tr>
     @endfor
     </tbody>

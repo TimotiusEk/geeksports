@@ -5,11 +5,6 @@
     @include('nav_header')
     <?php include 'php/datatables.php'; ?>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-    <script>
-        $("#dashboard_nav_bar").show();
-        document.getElementById("manage_event").className = 'active';
-        document.getElementById("dashboard").className = 'active';
-    </script>
 </head>
 <body>
 <h1 style="margin-left: 1%; font-size: 35px"><b>Update Winner</b></h1>

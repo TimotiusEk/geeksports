@@ -4,12 +4,7 @@
     <?php include 'php/required_js.php'; ?>
     @include('nav_header')
     <?php include 'php/datatables.php'; ?>
-        <link rel="stylesheet" type="text/css" href="/css/bootstrap-clockpicker.min.css">
-        <script>
-        $("#dashboard_nav_bar").show();
-
-        document.getElementById("dashboard").className = 'active';
-    </script>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-clockpicker.min.css">
 </head>
 <body>
 <h1 style="margin-left: 1%; font-size: 35px"><b>Add Streaming Channel</b></h1>
@@ -18,15 +13,15 @@
 {{--<h2 style="margin-left: 1%; font-size: 30px">The International 2019 ( - )</h2>--}}
 
 @if(isset($success))
-@if($success == true)
-<div style="width: 48%; margin-left: 26%; margin-right: 26%; margin-top:2%;background-color: #D1EED9; color: #930027; padding: 1%;">
-    <b>Streaming Channel has been added successfully!</b>
-</div>
+    @if($success == true)
+        <div style="width: 48%; margin-left: 26%; margin-right: 26%; margin-top:2%;background-color: #D1EED9; color: #930027; padding: 1%;">
+            <b>Streaming Channel has been added successfully!</b>
+        </div>
 
-<form method="get" action="manage_streaming_channel" name="myForm" id="myForm">
-    <input type="hidden" name="event_id" value="{{$event_id}}"/>
-</form>
-@endif
+        <form method="get" action="manage_streaming_channel" name="myForm" id="myForm">
+            <input type="hidden" name="event_id" value="{{$event_id}}"/>
+        </form>
+    @endif
 @endif
 
 <form action="add_streaming_channel" method="post">
@@ -40,7 +35,6 @@
         <b><label>URL</label></b>
         <input type="text" class="form-control" name="url" required/>
     </div>
-
 
 
     <div class="form-group">
@@ -62,19 +56,20 @@
     <!--todo: set event id by previous page-->
     <input type="hidden" name="event_id" value="{{$event_id}}"/>
 
-    <button type="submit" class="form-control btn btn-primary" style="margin-top: 35px"><b>Add Streaming Channel</b></button>
+    <button type="submit" class="form-control btn btn-primary" style="margin-top: 35px"><b>Add Streaming Channel</b>
+    </button>
 </form>
 
 @if(isset($success))
-@if($success == true)
-<script type="text/javascript">
-    function submitform() {
-        document.forms["myForm"].submit();
-    }
+    @if($success == true)
+        <script type="text/javascript">
+            function submitform() {
+                document.forms["myForm"].submit();
+            }
 
-    setTimeout(submitform, 2000)
-</script>
-@endif
+            setTimeout(submitform, 2000)
+        </script>
+    @endif
 @endif
 
 <script type="text/javascript" src="/js/bootstrap-clockpicker.min.js"></script>

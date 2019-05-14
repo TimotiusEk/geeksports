@@ -16,5 +16,5 @@ class Vacancy extends Model
     public $timestamps = false;
     protected $fillable = ["id", "commentator", "spectator", "admin", "videographer", "description", "event_id"];
 
-    protected $attributes = ["commentator" => 0, "spectator" => 0, "admin" => 0, "videographer" => 0, "other" =>0];
+    protected $attributes = ["commentator" => 0, "spectator" => 0, "admin" => 0, "videographer" => 0];
 }

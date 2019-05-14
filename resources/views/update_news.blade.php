@@ -3,12 +3,6 @@
     <?php include 'php/required_css.php'; ?>
     <?php include 'php/required_js.php'; ?>
     @include('nav_header')
-    <script>
-        $("#dashboard_nav_bar").show();
-        document.getElementById("manage_event").className = 'active';
-        document.getElementById("dashboard").className = 'active';
-    </script>
-
     <script type="text/javascript">
         function validateForm() {
             var allowedFiles = [".png", ".jpg", ".jpeg"];

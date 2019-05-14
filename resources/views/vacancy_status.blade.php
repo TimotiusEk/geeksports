@@ -4,19 +4,11 @@
     <?php include 'php/required_js.php'; ?>
     @include('nav_header')
     <?php include 'php/datatables.php'; ?>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-    <script>
-        $("#dashboard_nav_bar").show();
-        document.getElementById("manage_event").className = 'active';
-        document.getElementById("dashboard").className = 'active';
 
+    <script>
         $(document).ready(function () {
             $("#common").attr("disabled", "disabled");
         });
-
-        function selectAll() {
-            $('.subrole_checkbox').prop('checked', $("#select_all_checkbox").is(":checked"));
-        }
     </script>
 
     <style>
@@ -35,9 +27,7 @@
 <hr style="height:1px;border:none;color:#333;background-color:#333; width: 99%">
 <h2 style="margin-left: 1%; font-size: 30px; margin-bottom: 20px">{{$event_information}}</h2>
 
-<button type="submit" class="form-control btn btn-primary"
-        style="position: relative; left: 88%; padding-left: 30px; padding-right: 30px; width: fit-content"
-        id="show_sponsor_status_btn" data-toggle="modal" data-target="#myModal"><b>Search Worker</b></button>
+
 
 
 <ul class="nav nav-tabs" style="margin-left: 15px; margin-right: 15px">
@@ -228,65 +218,6 @@
     </table>
 </div>
 
-<!-- Search worker modal-->
-<div class="container">
-    <div class="modal fade" id="myModal" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Search Worker to Fill Vacancy</h4>
-                </div>
-                <form action="worker_search_result" method="post">
-                    {{csrf_field()}}
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <b><label>Role</label></b><br>
-                            <div class="col-sm-4"><input type="checkbox" value="" onchange="selectAll()"
-                                                         id="select_all_checkbox"> Select All
-                            </div>
-                            <div class="col-sm-4"></div>
-                            <div class="col-sm-4"></div>
-
-                            @foreach($subroles as $subrole)
-                                <div class="col-sm-4"><input type="checkbox" value={{$subrole->id}} name="subrole_id[]"
-                                                             class="subrole_checkbox"
-                                                             @foreach($vacant_roles as $vacant_role) @if($vacant_role == $subrole->name) checked @endif @endforeach>
-                                    {{$subrole->name}}
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <div class="form-group" style="margin-top: 80px">
-                            <b><label>Games</label></b><br>
-                            <select class="cari form-control" name="game_id[]" multiple="multiple" id="mySelect2"
-                                    style="width: 567px">
-                                @foreach($games as $game)
-                                    <option value="{{$game->id}}" selected>{{$game->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <b><label>Keyword</label></b><br>
-                            <input type="text" class="form-control" placeholder="Type your keyword (Optional)"
-                                   name="keyword">
-                        </div>
-
-                        <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                        <input type="hidden" name="event_information" value="{{$event_information}}"/>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-default">Submit</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-        </div>
-    </div>
-</div>
-
 <script>
     $("#confirmed").click(function () {
         if ($(this).attr('class') != "active") {
@@ -341,29 +272,6 @@
             $("#registered_list").hide();
             $("#denied_list").hide();
             $("#unanswered_list").show();
-        }
-    });
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-<script type="text/javascript">
-    $('.cari').select2({
-        placeholder: 'Type its Name',
-        ajax: {
-            url: '/search_game',
-            dataType: 'json',
-            delay: 250,
-            processResults: function (data) {
-                return {
-                    results: $.map(data, function (item) {
-                        return {
-                            text: item.name,
-                            id: item.id
-                        }
-                    })
-                };
-            },
-            cache: true
         }
     });
 </script>

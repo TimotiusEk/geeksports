@@ -3,6 +3,10 @@
     <?php include 'php/required_css.php'; ?>
     <?php include 'php/required_js.php'; ?>
     @include('nav_header')
+
+    <script>
+        document.getElementById("profile").className = 'active';
+    </script>
 </head>
 <body style="background-color: whitesmoke">
 <div class="container" style="width: 98%; padding: 1%; margin: 1%">

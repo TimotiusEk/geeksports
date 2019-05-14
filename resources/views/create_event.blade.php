@@ -15,9 +15,8 @@
                 }
             });
         });
-        $("#dashboard_nav_bar").show();
+
         document.getElementById("create_event").className = 'active';
-        document.getElementById("dashboard").className = 'active';
 
         function validateForm() {
             var allowedFiles = [".png", ".jpg", ".jpeg"];

@@ -51,7 +51,6 @@ class EventController extends Controller
             $sponsor_management->save();
         }
 
-        $industries = Industry::get();
         $companies = array();
         $companies_idx = 0;
 
@@ -94,7 +93,7 @@ class EventController extends Controller
         }
 
 
-        return view('sponsor_status', ['industries' => $industries, 'event_id' => $request->event_id, 'event_information' => $request->event_information, 'sponsor_managements' => $sponsor_managements, 'companies' => $companies, 'company_industries' => $company_industries]);
+        return view('sponsor_status', ['event_id' => $request->event_id, 'event_information' => $request->event_information, 'sponsor_managements' => $sponsor_managements, 'companies' => $companies, 'company_industries' => $company_industries]);
     }
 
     public function addVacancyPage(Request $request)
@@ -197,41 +196,7 @@ class EventController extends Controller
 
     public function vacancyStatusPage(Request $request)
     {
-        $subroles = Subrole::where('name', '!=', 'E-Sport Enthusiast')->where('name', '!=', 'Professional Player')->get();
-
         $vacancy = Vacancy::where("event_id", $request->event_id)->first();
-
-        $event_games = EventGameConnector::select('game_id')->where('event_id', $request->event_id)->get();
-
-        //get event games
-        $games = null;
-
-        for ($idx = 0; $idx < count($event_games); $idx++) {
-            if ($idx == 0) {
-                $games = Games::where('id', ($event_games[$idx])->game_id);
-            } else {
-                $games = $games->orWhere('id', ($event_games[$idx])->game_id);
-            }
-
-            if ($idx == count($event_games) - 1) {
-                $games = $games->get();
-            }
-        }
-
-        //get event vacant subroles
-        $vacancies = Vacancy::where('event_id', $request->event_id)->first();
-
-        $vacant_roles = array();
-        $vacancy_idx = 0;
-
-        foreach ($vacancies->getFillable() as $fillable) {
-            if ($fillable != "id" && $fillable != "event_id" && $fillable != "description") {
-                if ($vacancies->$fillable == 1) {
-                    $vacant_roles[$vacancy_idx] = ucfirst($fillable);
-                    $vacancy_idx++;
-                }
-            }
-        }
 
         if ($request->action != null) {
             $vacancy_management = new VacancyManagement;
@@ -332,7 +297,7 @@ class EventController extends Controller
             $user_games_idx++;
         }
 
-        return view('vacancy_status', ['subroles' => $subroles, 'event_id' => $request->event_id, 'event_information' => $request->event_information, 'vacancy_managements' => $vacancy_managements, 'workers' => $workers, 'user_subroles' => $user_subroles, 'user_games' => $user_games, 'games' => $games, 'vacant_roles' => $vacant_roles]);
+        return view('vacancy_status', ['event_id' => $request->event_id, 'event_information' => $request->event_information, 'vacancy_managements' => $vacancy_managements, 'workers' => $workers, 'user_subroles' => $user_subroles, 'user_games' => $user_games]);
     }
 
     public function showWorkerSearchResultPage(Request $request)
@@ -752,10 +717,7 @@ class EventController extends Controller
 
         //status (invited or not)
         foreach ($companies_collection as $company) {
-
             for ($idx = 0; $idx < count($company); $idx++) {
-
-
                 $sponsor_management = SponsorshipManagement::select('id')->where('action', "Invite")->where('company_id', ($company[$idx])->id)->first();
 
                 if ($sponsor_management == null) {
@@ -868,7 +830,7 @@ class EventController extends Controller
         return view('create_event');
     }
 
-    public function showManageEventPage()
+    public function showMyEventPage()
     {
         //cannot create event if not logged in
         $this->checkIfCookieExists();
@@ -922,14 +884,40 @@ class EventController extends Controller
         }
 
 
-        return view('manage_event', ['events' => $events, 'games' => $games_name, 'city_name' => $cities_name]);
+        return view('my_event', ['events' => $events, 'games' => $games_name, 'city_name' => $cities_name]);
     }
 
     public function showManageNewsForm(Request $request)
     {
         $news = News::where("event_id", $request->event_id)->get();
 
-        return view('manage_news', ['news' => $news, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
+        $event = Event::find($request->event_id);
+
+        if (!is_null($event->city_id)) {
+            $event->city = (City::select('name')->find($event->city_id))->name;
+        } else {
+            $event->city = "-";
+        }
+
+        if ($event->start_date != null) {
+            $new_date = date('d F Y', strtotime($event->start_date));
+            $event->start_date = $new_date;
+        }
+
+        if ($event->end_date != null) {
+            $new_date = date('d F Y', strtotime($event->end_date));
+            $event->end_date = $new_date;
+        }
+
+        foreach (EventGameConnector::select('game_id')->where('event_id', $event->id)->get() as $event_game_connector) {
+            if (is_null($event->game)) {
+                $event->game = (Games::select('name')->find($event_game_connector->game_id))->name;
+            } else {
+                $event->game .= ", " . (Games::select('name')->find($event_game_connector->game_id))->name;
+            }
+        }
+
+        return view('manage_news', ['event' => $event, 'news' => $news, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
     }
 
     public function showWriteNewsPage(Request $request)
@@ -1127,6 +1115,7 @@ class EventController extends Controller
     public function showManageVacancyPage(Request $request)
     {
         $vacancies = Vacancy::where("event_id", $request->event_id)->first();
+        $subroles = Subrole::where('name', '!=', 'E-Sport Enthusiast')->where('name', '!=', 'Professional Player')->get();
 
         $vacant_roles = "";
 
@@ -1142,14 +1131,98 @@ class EventController extends Controller
             $vacant_roles = rtrim($vacant_roles, ", ");
         }
 
-        return view('manage_vacancy', ['vacancies' => $vacancies, 'vacant_roles' => $vacant_roles, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
+        $vacant_roles_arr = array();
+        $vacancy_idx = 0;
+
+        foreach ($vacancies->getFillable() as $fillable) {
+            if ($fillable != "id" && $fillable != "event_id" && $fillable != "description") {
+                if ($vacancies->$fillable == 1) {
+                    $vacant_roles_arr[$vacancy_idx] = ucfirst($fillable);
+                    $vacancy_idx++;
+                }
+            }
+        }
+
+        $event_games = EventGameConnector::select('game_id')->where('event_id', $request->event_id)->get();
+
+        //get event games
+        $games = null;
+
+        for ($idx = 0; $idx < count($event_games); $idx++) {
+            if ($idx == 0) {
+                $games = Games::where('id', ($event_games[$idx])->game_id);
+            } else {
+                $games = $games->orWhere('id', ($event_games[$idx])->game_id);
+            }
+
+            if ($idx == count($event_games) - 1) {
+                $games = $games->get();
+            }
+        }
+
+        $event = Event::find($request->event_id);
+
+        if (!is_null($event->city_id)) {
+            $event->city = (City::select('name')->find($event->city_id))->name;
+        } else {
+            $event->city = "-";
+        }
+
+        if ($event->start_date != null) {
+            $new_date = date('d F Y', strtotime($event->start_date));
+            $event->start_date = $new_date;
+        }
+
+        if ($event->end_date != null) {
+            $new_date = date('d F Y', strtotime($event->end_date));
+            $event->end_date = $new_date;
+        }
+
+        foreach (EventGameConnector::select('game_id')->where('event_id', $event->id)->get() as $event_game_connector) {
+            if (is_null($event->game)) {
+                $event->game = (Games::select('name')->find($event_game_connector->game_id))->name;
+            } else {
+                $event->game .= ", " . (Games::select('name')->find($event_game_connector->game_id))->name;
+            }
+        }
+
+        return view('manage_vacancy', ['subroles' => $subroles, 'event' => $event, 'vacancies' => $vacancies, 'vacant_roles' => $vacant_roles, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'vacant_roles_arr' => $vacant_roles_arr, 'games' => $games]);
     }
 
     public function showManageSponsorshipPackagePage(Request $request)
     {
+        //get all industry to be shown in modal
+        $industries = Industry::get();
+
         $packages = SponsorshipPackage::where("event_id", $request->event_id)->get();
 
-        return view('manage_sponsorship_package', ['packages' => $packages, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
+        $event = Event::find($request->event_id);
+
+        if (!is_null($event->city_id)) {
+            $event->city = (City::select('name')->find($event->city_id))->name;
+        } else {
+            $event->city = "-";
+        }
+
+        if ($event->start_date != null) {
+            $new_date = date('d F Y', strtotime($event->start_date));
+            $event->start_date = $new_date;
+        }
+
+        if ($event->end_date != null) {
+            $new_date = date('d F Y', strtotime($event->end_date));
+            $event->end_date = $new_date;
+        }
+
+        foreach (EventGameConnector::select('game_id')->where('event_id', $event->id)->get() as $event_game_connector) {
+            if (is_null($event->game)) {
+                $event->game = (Games::select('name')->find($event_game_connector->game_id))->name;
+            } else {
+                $event->game .= ", " . (Games::select('name')->find($event_game_connector->game_id))->name;
+            }
+        }
+
+        return view('manage_sponsorship_package', ['industries' => $industries, 'event' => $event, 'packages' => $packages, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
     }
 
     public function deleteVacancy(Request $request)
@@ -1404,19 +1477,19 @@ class EventController extends Controller
 
     public function broadcastPackage(Request $request)
     {
-        if (!is_array($request->user_id)) {
+        if (!is_array($request->company_id)) {
             $sponsor_management = new SponsorshipManagement;
             $sponsor_management->action = "Invite";
             $sponsor_management->event_id = $request->event_id;
-            $sponsor_management->company_id = $request->user_id;
+            $sponsor_management->company_id = $request->company_id;
 
             $sponsor_management->save();
         } else {
-            foreach ($request->user_id as $user_id) {
+            foreach ($request->company_id as $company_id) {
                 $sponsor_management = new SponsorshipManagement;
                 $sponsor_management->action = "Invite";
                 $sponsor_management->event_id = $request->event_id;
-                $sponsor_management->company_id = $user_id;
+                $sponsor_management->company_id = $company_id;
 
                 $sponsor_management->save();
             }
@@ -2066,7 +2139,7 @@ class EventController extends Controller
 
                 $participant_management_2->save();
 
-                if($request->action == "Confirm") {
+                if ($request->action == "Confirm") {
                     $experience = new Experience;
                     $experience->event_game_id = $request->event_game_id;
                     $experience->gamer_id = $participant_management->gamer_id;
@@ -2142,15 +2215,17 @@ class EventController extends Controller
                         }
                     } else if ($participant_management->event_id == $request->event_id) {
                         $registered = false;
+
                         //check if the invited user has registered
                         foreach ($event_game_connector as $event_game) {
-                            $participant_management = ParticipantManagement::where('event_game_id', $event_game->id)->where('gamer_id', $participant_management->gamer_id)->where('action', 'Register')->first();
+                            $pm  = ParticipantManagement::where('event_game_id', $event_game->id)->where('gamer_id', $participant_management->gamer_id)->where('action', 'Register')->first();
 
-                            if (!is_null($participant_management)) {
+                            if (!is_null($pm)) {
                                 $registered = true;
                                 break;
                             }
                         }
+
 
                         if (!$registered) {
                             $gamers[$gamers_idx] = Gamer::find($participant_management->gamer_id);
@@ -2170,6 +2245,7 @@ class EventController extends Controller
 
                             ($gamers[$gamers_idx])->games = rtrim($game_name, ", ");
                         }
+
                     }
                 }
             }
@@ -2182,13 +2258,40 @@ class EventController extends Controller
         //get if it is open for registration or not
         $registration_status = (Event::select('participant_registration')->find($request->event_id))->participant_registration;
 
+        //get related event
+        $event = Event::find($request->event_id);
+
+        if (!is_null($event->city_id)) {
+            $event->city = (City::select('name')->find($event->city_id))->name;
+        } else {
+            $event->city = "-";
+        }
+
+        if ($event->start_date != null) {
+            $new_date = date('d F Y', strtotime($event->start_date));
+            $event->start_date = $new_date;
+        }
+
+        if ($event->end_date != null) {
+            $new_date = date('d F Y', strtotime($event->end_date));
+            $event->end_date = $new_date;
+        }
+
+        foreach (EventGameConnector::select('game_id')->where('event_id', $event->id)->get() as $event_game_connector) {
+            if (is_null($event->game)) {
+                $event->game = (Games::select('name')->find($event_game_connector->game_id))->name;
+            } else {
+                $event->game .= ", " . (Games::select('name')->find($event_game_connector->game_id))->name;
+            }
+        }
+
         //to prevent double resubmission on refresh
         if ($request->action != null) {
             return redirect()->action(
-                'EventController@showManageParticipantPage', ['event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'teams' => $teams, 'gamers' => $gamers, 'registration_status' => $registration_status]);
+                'EventController@showManageParticipantPage', ['event' => $event, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'teams' => $teams, 'gamers' => $gamers, 'registration_status' => $registration_status]);
         }
 
-        return view('manage_participant', ['event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'teams' => $teams, 'gamers' => $gamers, 'registration_status' => $registration_status, 'games' => $games->get()]);
+        return view('manage_participant', ['event' => $event, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'teams' => $teams, 'gamers' => $gamers, 'registration_status' => $registration_status, 'games' => $games->get()]);
     }
 
     /**
@@ -2805,7 +2908,33 @@ class EventController extends Controller
             }
         }
 
-        return view('manage_streaming_channel', ['streaming_channels' => $streaming_channels, 'event_id' => Input::get("event_id"), 'event_information' => $this->getEventInformation(Input::get("event_id"))]);
+        $event = Event::find(Input::get("event_id"));
+
+        if (!is_null($event->city_id)) {
+            $event->city = (City::select('name')->find($event->city_id))->name;
+        } else {
+            $event->city = "-";
+        }
+
+        if ($event->start_date != null) {
+            $new_date = date('d F Y', strtotime($event->start_date));
+            $event->start_date = $new_date;
+        }
+
+        if ($event->end_date != null) {
+            $new_date = date('d F Y', strtotime($event->end_date));
+            $event->end_date = $new_date;
+        }
+
+        foreach (EventGameConnector::select('game_id')->where('event_id', $event->id)->get() as $event_game_connector) {
+            if (is_null($event->game)) {
+                $event->game = (Games::select('name')->find($event_game_connector->game_id))->name;
+            } else {
+                $event->game .= ", " . (Games::select('name')->find($event_game_connector->game_id))->name;
+            }
+        }
+
+        return view('manage_streaming_channel', ['event' => $event, 'streaming_channels' => $streaming_channels, 'event_id' => Input::get("event_id"), 'event_information' => $this->getEventInformation(Input::get("event_id"))]);
     }
 
     public function deleteStreamingChannel(Request $request)
@@ -2851,7 +2980,7 @@ class EventController extends Controller
 
         $event->save();
 
-        return Redirect::action('EventController@showManageEventPage');
+        return Redirect::action('EventController@showMyEventPage');
     }
 
     public function unpublishEvent(Request $request)
@@ -2861,7 +2990,7 @@ class EventController extends Controller
 
         $event->save();
 
-        return Redirect::action('EventController@showManageEventPage');
+        return Redirect::action('EventController@showMyEventPage');
     }
 
     public function openRegistration(Request $request)

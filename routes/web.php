@@ -37,7 +37,7 @@ Route::post('/manage_news', 'EventController@showManageNewsForm');
 //    return view('manage_event');
 //});
 
-Route::get('/manage_event', 'EventController@showManageEventPage');
+Route::get('/my_event', 'EventController@showMyEventPage');
 
 
 Route::post('/write_news', 'EventController@showWriteNewsPage');

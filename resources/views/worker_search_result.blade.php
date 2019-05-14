@@ -6,10 +6,6 @@
     <?php include 'php/datatables.php'; ?>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
     <script>
-        $("#dashboard_nav_bar").show();
-        document.getElementById("manage_event").className = 'active';
-        document.getElementById("dashboard").className = 'active';
-
         $(document).ready(function () {
             $("#common").attr("disabled", "disabled");
         });
@@ -104,7 +100,7 @@
 <!--check if all search result has been invited-->
 @foreach($status as $s)
     @if($s == null)
-        <form action="invite_people" method="post">
+        <form action="invite_worker" method="post">
             {{csrf_field()}}
             <div align="right" style="margin-right: 20px">
                 @for($user_idx = 0 ; $user_idx < count($user_id); $user_idx++)
@@ -168,7 +164,7 @@
                                 ({{$user_games[$idx]}})
                             </div>
                             <div align="center" style="margin-top: 30px">
-                                <form method="post" action="invite_people">
+                                <form method="post" action="invite_worker">
                                     {{csrf_field()}}
                                     @if($status[$idx] == "Invite")
                                         <button class="form-control btn btn-dark" disabled><b>Invited</b>

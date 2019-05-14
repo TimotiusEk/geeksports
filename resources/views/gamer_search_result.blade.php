@@ -5,10 +5,6 @@
     @include('nav_header')
     <?php include 'php/datatables.php'; ?>
     <script>
-        $("#dashboard_nav_bar").show();
-        document.getElementById("manage_event").className = 'active';
-        document.getElementById("dashboard").className = 'active';
-
         $(document).ready(function () {
             $("#common").attr("disabled", "disabled");
         });

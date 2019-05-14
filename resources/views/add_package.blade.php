@@ -4,11 +4,6 @@
     <?php include 'php/required_js.php'; ?>
     @include('nav_header')
     <?php include 'php/datatables.php'; ?>
-    <script>
-        $("#dashboard_nav_bar").show();
-        document.getElementById("manage_event").className = 'active';
-        document.getElementById("dashboard").className = 'active';
-    </script>
 </head>
 <body>
 <h1 style="margin-left: 1%; font-size: 35px"><b>Add Sponsorship Package</b></h1>

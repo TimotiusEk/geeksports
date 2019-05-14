@@ -5,17 +5,9 @@
     @include('nav_header')
     <?php include 'php/datatables.php'; ?>
     <script>
-        $("#dashboard_nav_bar").show();
-        document.getElementById("manage_event").className = 'active';
-        document.getElementById("dashboard").className = 'active';
-
         $(document).ready(function () {
             $("#common").attr("disabled", "disabled");
         });
-
-        function selectAll() {
-            $('.industry_checkbox').prop('checked', $("#select_all_checkbox").is(":checked"));
-        }
     </script>
 
     <style>
@@ -28,11 +20,6 @@
 <h1 style="font-size: 35px; margin-left: 1%;"><b>Sponsor Status</b></h1>
 <hr style="height:1px;border:none;color:#333;background-color:#333; width: 99%">
 <h2 style="margin-left: 1%; font-size: 30px; margin-bottom: 20px">{{$event_information}}</h2>
-
-<button type="submit" class="form-control btn btn-primary"
-        style="position: relative; left: 88%; padding-left: 30px; padding-right: 30px; width: fit-content"
-        id="show_sponsor_status_btn" data-toggle="modal" data-target="#myModal"><b>Search Sponsor</b></button>
-
 
 <ul class="nav nav-tabs" style="margin-left: 15px; margin-right: 15px">
     <li class="active" id="deal"><a>Deal</a></li>
@@ -191,49 +178,6 @@
             </td>
         </tr>
     </table>
-</div>
-
-<!-- Search Sponsor Modal -->
-<div class="container">
-    <div class="modal fade" id="myModal" role="dialog">
-        <div class="modal-dialog modal-lg">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Search for Sponsor</h4>
-                </div>
-                <form action="sponsor_search_result" method="post">
-                    {{csrf_field()}}
-                    <div class="modal-body">
-                        <p style="font-size: 22px"><b>Industry</b></p>
-                        <div class="container-fluid" style="margin-bottom: 35px;">
-
-                            <div class="col-sm-4"><input type="checkbox" value="" onchange="selectAll()"
-                                                         id="select_all_checkbox"> Select All
-                            </div>
-                            <div class="col-sm-4"></div>
-                            <div class="col-sm-4"></div>
-                            @foreach($industries as $industry)
-                                <div class="col-sm-4"><input type="checkbox"
-                                                             value={{$industry->id}} class="industry_checkbox"
-                                                             name="industry_id[]"> {{$industry->name}}
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <input type="hidden" name="event_information" value="{{$event_information}}"/>
-                        <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                        <input type="text" class="form-control" placeholder="Type your keyword (Optional)"
-                               name="keyword">
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-default">Search</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script>
