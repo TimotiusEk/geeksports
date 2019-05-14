@@ -80,7 +80,6 @@
                 if (tab === "all" || tab === "Invited") {
                     content += '                    <form  align="right" action="sponsorship" method="post" style="margin-top: -60px" id="sponsorship_response_form">' +
                         '{{csrf_field()}}' +
-                        '                        <input type="hidden" name="event_information" value="' + (events[idx])["name"] + ' (' + (events[idx])["start_date"] + ' - ' + (events[idx])["end_date"] + ')"/>' +
                         '                        <input type="hidden" name="event_id" value="' + (events[idx])["id"] + '"/>' +
                         '<input type="hidden" name="action" id="action"/>' +
                         '                        <a href="#" onclick="fillActionInputAndSubmit(\'Interested\'); "><img' +

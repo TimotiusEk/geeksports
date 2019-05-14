@@ -20,7 +20,7 @@
         <form method="post" action="manage_vacancy" name="myForm" id="myForm">
             {{csrf_field()}}
             <input type="hidden" name="event_id" value="{{$event_id}}"/>
-            <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
         </form>
     @endif
 @endif
@@ -49,7 +49,7 @@
 
 
     <input type="hidden" name="event_id" value="{{$event_id}}"/>
-    <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
 
     <button type="submit" class="form-control btn btn-primary"><b>Update</b></button>
 </form>

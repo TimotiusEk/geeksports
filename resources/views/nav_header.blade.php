@@ -8,7 +8,7 @@
             <li id="home"><a href="/home">Home</a></li>
             <!--            <li id="search"><a href="/search">Search</a></li>-->
             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Dashboard
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="dashboard">Dashboard
                     <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li id="create_event"><a href="create_event">Create Event</a></li>

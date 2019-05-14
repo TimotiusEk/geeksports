@@ -113,6 +113,7 @@ Route::get('/update_profile', 'UserController@showUpdateProfileForm');
 Route::post('/update_profile', 'UserController@updateProfile');
 Route::get('/event_location_details', 'EventController@showEventLocationDetailsPage');
 Route::get('/view_profile', 'UserController@showViewProfilePage');
+Route::post('/change_vacancy_status', 'EventController@changeVacancyStatus');
 
 
 

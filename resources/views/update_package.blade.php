@@ -24,7 +24,7 @@
         <form method="post" action="manage_sponsorship_package" name="myForm" id="myForm">
             {{csrf_field()}}
             <input type="hidden" name="event_id" value="{{$event_id}}"/>
-            <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
         </form>
     @endif
 @endif
@@ -47,7 +47,7 @@
     </div>
 
     <input type="hidden" name="event_id" value="{{$event_id}}"/>
-    <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
     <input type="hidden" name="package_id" value="{{$package->id}}"/>
 
     <button type="submit" class="form-control btn btn-primary" style="margin-top: 35px"><b>Update Package</b></button>

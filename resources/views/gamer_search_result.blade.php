@@ -62,7 +62,7 @@
                         </div>
 
                         <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                        <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-default">Search</button>
                         </div>
@@ -85,7 +85,7 @@
                     @endif
                 @endfor
                 <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
 
                 @if(is_array($game_id) && count($game_id) != 0)
                     @foreach($game_id as $id)
@@ -144,7 +144,7 @@
                                     @endif
                                     <input type="hidden" name="user_id" value="{{$user_id[$idx]}}"/>
                                     <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                                    <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
 
                                     @if(is_array($game_id) && count($game_id) != 0)
                                         @foreach($game_id as $id)

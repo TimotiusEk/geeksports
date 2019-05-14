@@ -65,22 +65,21 @@
                 }
 
                 content += '<div class="row" style="margin-bottom: 15px; background-color: white; border-radius: 10px; padding-bottom: 1%">' +
-                    '            <div class="col-md-3 text-center"><img' +
+                    '            <div class="col-md-4 text-center"><img' +
                     '                        style=" height: 225px; width: 400px; border-radius: 10px; margin-left: -5px; margin-top: 15px; "' +
                     '                        src="/images/event_brochure/' + (events[idx])["brochure"] + '"/></div>' +
-                    '            <div class="col-md-9" style="font-size: 40px; vertical-align: top;">' +
+                    '            <div class="col-md-8" style="font-size: 40px; vertical-align: top;">' +
                     '                <div style="margin-left: 70px">' +
                     '                    <p style="margin-top: 20px; margin-left: -30px;"><b><a href="/event_details?event_id=ev'+(events[idx])["id"]+'">' + (events[idx])["name"] + '</a></b></p>';
-                if (tab === "all" || tab === "invited") {
+                if ((tab === "all" || tab === "invited") && (events[idx])["open_vacancy"] === 1) {
                     content += '                    <form action="vacancy_registration_form" method="GET" style="margin-top: -60px">' +
-                        '                        <input type="hidden" name="event_information" value="' + (events[idx])["name"] + ' (' + (events[idx])["start_date"] + ' - ' + (events[idx])["end_date"] + ')"/>' +
                         '                        <input type="hidden" name="event_id" value="' + (events[idx])["id"] + '"/>' +
                         '                        <a href="#" onclick="$(this).closest(\'form\').submit()"><img' +
                         '                                    src="/images/register_btn.png" width="125px" align="right"/></a>' +
                         '                    </form>' +
                         '<hr style="margin-top: 70px">';
                 } else {
-                    content += '<hr style="margin-top: 10px">';
+                    content += '<p align="right" style="margin-top: -20px; font-size: 22px"><b>Vacancy Closed</b></p><hr style="margin-top: 10px">';
                 }
 
 

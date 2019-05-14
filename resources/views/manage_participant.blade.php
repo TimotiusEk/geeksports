@@ -186,8 +186,6 @@
                                             <form action="manage_participant" method="post">
                                                 {{csrf_field()}}
                                                 <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                                                <input type="hidden" name="event_information"
-                                                       value="{{$event_information}}"/>
                                                 <input type="hidden" name="team_id" value="{{$team->id}}"/>
                                                 <input type="hidden" name="event_game_id"
                                                        value="{{$team->event_game_id}}"/>
@@ -360,7 +358,7 @@
                         </div>
 
                         <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                        <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-default">Search</button>
                         </div>

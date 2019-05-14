@@ -93,14 +93,14 @@ class EventController extends Controller
         }
 
 
-        return view('sponsor_status', ['event_id' => $request->event_id, 'event_information' => $request->event_information, 'sponsor_managements' => $sponsor_managements, 'companies' => $companies, 'company_industries' => $company_industries]);
+        return view('sponsor_status', ['event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'sponsor_managements' => $sponsor_managements, 'companies' => $companies, 'company_industries' => $company_industries]);
     }
 
     public function addVacancyPage(Request $request)
     {
         $subroles = Subrole::where('name', '!=', 'E-Sport Enthusiast')->where('name', '!=', 'Professional Player')->get();
         if ($request->subrole_id == null) {
-            return view('add_vacancy', ['subroles' => $subroles, 'event_id' => $request->event_id, 'event_information' => $request->event_information]);
+            return view('add_vacancy', ['subroles' => $subroles, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
         } else {
             $vacancies = new Vacancy;
             foreach ($request->subrole_id as $id) {
@@ -116,7 +116,7 @@ class EventController extends Controller
             $vacancies->event_id = $request->event_id;
 
             if ($vacancies->save()) {
-                return view('add_vacancy', ['success' => true, 'subroles' => $subroles, 'event_id' => $request->event_id, 'event_information' => $request->event_information]);
+                return view('add_vacancy', ['success' => true, 'subroles' => $subroles, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
             }
         }
     }
@@ -124,7 +124,7 @@ class EventController extends Controller
     public function addPackagePage(Request $request)
     {
         if ($request->package_name == null) {
-            return view('add_package', ['event_id' => $request->event_id, 'event_information' => $request->event_information]);
+            return view('add_package', ['event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
         } else {
             $package = new SponsorshipPackage;
 
@@ -134,7 +134,7 @@ class EventController extends Controller
             $package->event_id = $request->event_id;
 
             if ($package->save()) {
-                return view('add_package', ['success' => true, 'event_id' => $request->event_id, 'event_information' => $request->event_information]);
+                return view('add_package', ['success' => true, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
             }
         }
     }
@@ -145,7 +145,7 @@ class EventController extends Controller
         if ($request->subrole_id == null) {
             $vacant_roles = explode(", ", $request->vacant_roles);
 
-            return view('update_vacancy', ['subroles' => $subroles, 'event_id' => $request->event_id, 'event_information' => $request->event_information, 'vacant_roles' => $vacant_roles, 'description' => $request->description]);
+            return view('update_vacancy', ['subroles' => $subroles, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'vacant_roles' => $vacant_roles, 'description' => $request->description]);
         } else {
             $vacancies = Vacancy::where('event_id', '=', $request->event_id)->first();
             $vacant_roles = array();
@@ -171,7 +171,7 @@ class EventController extends Controller
             $vacancies->description = $request->description;
 
             if ($vacancies->save()) {
-                return view('update_vacancy', ['success' => true, 'subroles' => $subroles, 'event_id' => $request->event_id, 'event_information' => $request->event_information, 'vacant_roles' => $vacant_roles, 'description' => $request->description]);
+                return view('update_vacancy', ['success' => true, 'subroles' => $subroles, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'vacant_roles' => $vacant_roles, 'description' => $request->description]);
             }
         }
     }
@@ -180,7 +180,7 @@ class EventController extends Controller
     {
         $package = SponsorshipPackage::find($request->package_id);
         if ($request->package_name == null) {
-            return view('update_package', ['package' => $package, 'event_id' => $request->event_id, 'event_information' => $request->event_information]);
+            return view('update_package', ['package' => $package, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
         } else {
             $package->package_name = $request->package_name;
             $package->sponsor_rights = $request->sponsor_rights;
@@ -188,7 +188,7 @@ class EventController extends Controller
             $package->event_id = $request->event_id;
 
             if ($package->save()) {
-                return view('update_package', ['success' => true, 'package' => $package, 'event_id' => $request->event_id, 'event_information' => $request->event_information]);
+                return view('update_package', ['success' => true, 'package' => $package, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
             }
         }
     }
@@ -297,7 +297,7 @@ class EventController extends Controller
             $user_games_idx++;
         }
 
-        return view('vacancy_status', ['event_id' => $request->event_id, 'event_information' => $request->event_information, 'vacancy_managements' => $vacancy_managements, 'workers' => $workers, 'user_subroles' => $user_subroles, 'user_games' => $user_games]);
+        return view('vacancy_status', ['event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'vacancy_managements' => $vacancy_managements, 'workers' => $workers, 'user_subroles' => $user_subroles, 'user_games' => $user_games]);
     }
 
     public function showWorkerSearchResultPage(Request $request)
@@ -606,7 +606,7 @@ class EventController extends Controller
             }
         }
 
-        return view('worker_search_result', ['all_subroles' => $all_subroles, 'subroles' => $subroles, 'subrole_name' => $subrole_name, 'game_id' => $game_id, 'game_name' => $game_name, 'keyword' => $request->keyword, 'display_names' => $display_name, 'user_games' => $user_games, 'subroles' => $subroles, 'user_id' => $user_id, 'event_id' => $request->event_id, 'event_information' => $request->event_information, 'subrole_id' => $request->subrole_id, 'game_id' => $request->game_id, 'status' => $status, 'profile_picture' => $profile_picture]);
+        return view('worker_search_result', ['all_subroles' => $all_subroles, 'subroles' => $subroles, 'subrole_name' => $subrole_name, 'game_id' => $game_id, 'game_name' => $game_name, 'keyword' => $request->keyword, 'display_names' => $display_name, 'user_games' => $user_games, 'subroles' => $subroles, 'user_id' => $user_id, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'subrole_id' => $request->subrole_id, 'game_id' => $request->game_id, 'status' => $status, 'profile_picture' => $profile_picture]);
     }
 
 
@@ -731,7 +731,7 @@ class EventController extends Controller
             }
         }
 
-        return view('sponsor_search_result', ['industry_name' => $industry_name, 'keyword' => $request->keyword, 'companies_collection' => $companies_collection, 'industries' => $industries, 'event_id' => $request->event_id, 'event_information' => $request->event_information, 'industry_id' => $request->industry_id, 'status' => $status, 'all_industries' => $all_industries]);
+        return view('sponsor_search_result', ['industry_name' => $industry_name, 'keyword' => $request->keyword, 'companies_collection' => $companies_collection, 'industries' => $industries, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'industry_id' => $request->industry_id, 'status' => $status, 'all_industries' => $all_industries]);
     }
 
     public function searchGame(Request $request)
@@ -923,7 +923,7 @@ class EventController extends Controller
     public function showWriteNewsPage(Request $request)
     {
         if ($request->title == null) {
-            return view('write_news', ['event_id' => $request->event_id, 'event_information' => $request->event_information]);
+            return view('write_news', ['event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
         } else {
             $success = false;
             $news = new News;
@@ -952,7 +952,7 @@ class EventController extends Controller
                 $success = true;
             }
 
-            return view('write_news', ['success' => $success, 'event_id' => $request->event_id, 'event_information' => $request->event_information]);
+            return view('write_news', ['success' => $success, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
         }
     }
 
@@ -1059,7 +1059,7 @@ class EventController extends Controller
     public function updateNews(Request $request)
     {
         if ($request->title == null) {
-            return view('update_news', ['news' => News::find($request->news_id), 'event_id' => $request->event_id, 'event_information' => $request->event_information]);
+            return view('update_news', ['news' => News::find($request->news_id), 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
         } else {
             $news = News::find($request->news_id);
 
@@ -1082,7 +1082,7 @@ class EventController extends Controller
 
                 $success = true;
             }
-            return view('update_news', ['success' => $success, 'news' => $news, 'event_id' => $request->event_id, 'event_information' => $request->event_information]);
+            return view('update_news', ['success' => $success, 'news' => $news, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
         }
     }
 
@@ -1097,7 +1097,7 @@ class EventController extends Controller
 
         $news->save();
 
-        return view('publish_news', ['event_id' => $request->event_id, 'event_information' => $request->event_information]);
+        return view('publish_news', ['event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
     }
 
     public function searchCity(Request $request)
@@ -1229,7 +1229,7 @@ class EventController extends Controller
     {
         Vacancy::where('event_id', '=', $request->event_id)->delete();
 
-        return view('delete_vacancy', ["event_id" => $request->event_id, "event_information" => $request->event_information]);
+        return view('delete_vacancy', ["event_id" => $request->event_id, "event_information" => $this->getEventInformation($request->event_id)]);
     }
 
     public function deletePackage(Request $request)
@@ -1238,7 +1238,7 @@ class EventController extends Controller
 
             $packages = SponsorshipPackage::where("event_id", $request->event_id)->get();
 
-            return view('delete_package', ['packages' => $packages, 'event_id' => $request->event_id, 'event_information' => $request->event_information]);
+            return view('delete_package', ['packages' => $packages, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
         }
     }
 
@@ -1246,7 +1246,7 @@ class EventController extends Controller
     {
         if (News::where("id", $request->news_id)->delete()) {
 
-            return view('delete_news', ['event_id' => $request->event_id, 'event_information' => $request->event_information]);
+            return view('delete_news', ['event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
         }
     }
 
@@ -1472,7 +1472,7 @@ class EventController extends Controller
             }
         }
 
-        return view('invite_worker', ["user_id" => $request->user_id, "event_id" => $request->event_id, "event_information" => $request->event_information, "subrole_id" => $request->subrole_id, "game_id" => $request->game_id, "keyword" => $request->keyword]);
+        return view('invite_worker', ["user_id" => $request->user_id, "event_id" => $request->event_id, "event_information" => $this->getEventInformation($request->event_id), "subrole_id" => $request->subrole_id, "game_id" => $request->game_id, "keyword" => $request->keyword]);
     }
 
     public function broadcastPackage(Request $request)
@@ -1496,7 +1496,7 @@ class EventController extends Controller
         }
 
 
-        return view('broadcast_package', ["event_id" => $request->event_id, "event_information" => $request->event_information, "industry_id" => $request->industry_id, "keyword" => $request->keyword]);
+        return view('broadcast_package', ["event_id" => $request->event_id, "event_information" => $this->getEventInformation($request->event_id), "industry_id" => $request->industry_id, "keyword" => $request->keyword]);
     }
 
     public function showEventDetails()
@@ -1750,25 +1750,25 @@ class EventController extends Controller
         $user_subroles = UserSubroleConnector::select('subrole_id')->where('user_id', Cookie::get('user_id'))->get();
 
 
-        $vacancies = $vacancies->get();
-
         //retrieve vacancies based on user's subroles
         for ($user_subroles_idx = 0; $user_subroles_idx < count($user_subroles); $user_subroles_idx++) {
             $subrole_name = (Subrole::select('name')->find(($user_subroles[$user_subroles_idx])->subrole_id))->name;
             if ($subrole_name != "Professional Player") {
                 if ($user_subroles_idx == 0) {
-                    $vacancies = $vacancies->where(strtolower((Subrole::select('name')->find(($user_subroles[$user_subroles_idx])->subrole_id))->name));
+                    $vacancies = $vacancies->where(strtolower((Subrole::select('name')->find(($user_subroles[$user_subroles_idx])->subrole_id))->name), 1);
                 } else {
-                    $vacancies = $vacancies->orWhere(strtolower((Subrole::select('name')->find(($user_subroles[$user_subroles_idx])->subrole_id))->name));
+                    $vacancies = $vacancies->orWhere(strtolower((Subrole::select('name')->find(($user_subroles[$user_subroles_idx])->subrole_id))->name), 1);
                 }
             }
         }
 
+        $vacancies = $vacancies->get();
         //get event based on its vacancy
         foreach ($vacancies as $vacancy) {
             $vacant_roles[$idx] = "";
             $games[$idx] = "";
             $events[$idx] = Event::find($vacancy->event_id);
+            ($events[$idx])->open_vacancy = $vacancy->open;
 
 
             if (!is_null(($events[$idx])->city_id)) {
@@ -1930,7 +1930,7 @@ class EventController extends Controller
             $idx++;
         }
 
-        return view('vacancy_registration', ['event_id' => $request->event_id, 'event_information' => $request->event_information, 'subroles' => $subroles]);
+        return view('vacancy_registration', ['event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'subroles' => $subroles]);
     }
 
     public function vacancyRegistration(Request $request)
@@ -1964,7 +1964,7 @@ class EventController extends Controller
         }
 
 
-        return view('vacancy_registration', ['success' => $success, 'event_id' => $request->event_id, 'event_information' => $request->event_information, 'subroles' => $subroles]);
+        return view('vacancy_registration', ['success' => $success, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'subroles' => $subroles]);
     }
 
     public function showParticipantRegistrationForm(Request $request)
@@ -2521,7 +2521,7 @@ class EventController extends Controller
             }
         }
 
-        return view('gamer_search_result', ['game_id' => $game_id, 'game_name' => $game_name, 'keyword' => $request->keyword, 'display_names' => $display_name, 'user_games' => $user_games, 'user_id' => $user_id, 'event_id' => $request->event_id, 'event_information' => $request->event_information, 'game_id' => $request->game_id, 'status' => $status, 'profile_picture' => $profile_picture]);
+        return view('gamer_search_result', ['game_id' => $game_id, 'game_name' => $game_name, 'keyword' => $request->keyword, 'display_names' => $display_name, 'user_games' => $user_games, 'user_id' => $user_id, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'game_id' => $request->game_id, 'status' => $status, 'profile_picture' => $profile_picture]);
     }
 
     public function inviteGamer(Request $request)
@@ -2547,7 +2547,7 @@ class EventController extends Controller
             }
         }
 
-        return view('invite_gamer', ["user_id" => $request->user_id, "event_id" => $request->event_id, "event_information" => $request->event_information, "subrole_id" => $request->subrole_id, "game_id" => $request->game_id, "keyword" => $request->keyword]);
+        return view('invite_gamer', ["user_id" => $request->user_id, "event_id" => $request->event_id, "event_information" => $this->getEventInformation($request->event_id), "subrole_id" => $request->subrole_id, "game_id" => $request->game_id, "keyword" => $request->keyword]);
     }
 
     public function showParticipantStatusPage()
@@ -3032,5 +3032,15 @@ class EventController extends Controller
         }
 
         return view('search_event_location', ['q' => Input::get('q'), 'event_locations' => $event_locations]);
+    }
+
+    public function changeVacancyStatus(Request $request){
+        $vacancy = Vacancy::find($request->vacancy_id);
+
+        $vacancy->open = $request->action;
+
+        $vacancy->save();
+
+        return view('change_vacancy_status', ['event_id' => $request->event_id]);
     }
 }

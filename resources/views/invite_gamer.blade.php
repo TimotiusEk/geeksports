@@ -7,7 +7,7 @@
 <form action="gamer_search_result" method="post" name="myForm" id="myForm">
     {{csrf_field()}}
     <input type="hidden" name="event_id" value="{{$event_id}}"/>
-    <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
 
     @if(is_array($game_id))
         @if(count($game_id) != 0)

@@ -42,7 +42,7 @@
         <form method="post" action="manage_news" name="myForm" id="myForm">
             {{csrf_field()}}
             <input type="hidden" name="event_id" value="{{$event_id}}"/>
-            <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
         </form>
     @endif
 @endif
@@ -71,7 +71,7 @@
 
     @if(isset($event_id))
         <input type="hidden" name="event_id" value="{{$event_id}}"/>
-        <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
     @endif
 
     <input type="hidden" name="news_id" value="{{$news->id}}"/>

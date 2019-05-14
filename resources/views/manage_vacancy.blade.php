@@ -4,7 +4,7 @@
     <?php include 'php/required_js.php'; ?>
     @include('nav_header')
     <?php include 'php/datatables.php'; ?>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
     <script>
         function selectAll() {
             $('.subrole_checkbox').prop('checked', $("#select_all_checkbox").is(":checked"));
@@ -13,18 +13,9 @@
         $(document).ready(function () {
             $("#common").attr("disabled", "disabled");
         });
-
-        function showModal(eventName, eventId) {
-            $("#event_name").text(eventName);
-            $("#event_id").val(eventId);
-        }
     </script>
 </head>
 <body style="background-color: whitesmoke">
-{{--<h1 style="margin-left: 1%; font-size: 35px"><b>Roles Vacancy</b></h1>--}}
-{{--<hr style="height:1px;border:none;color:#333;background-color:#333; width: 99%">--}}
-{{--<h2 style="margin-left: 1%; font-size: 30px">{{$event_information}}</h2>--}}
-
 
 <div class="container-fluid">
     <div class="row" style="background-color: white; width: 98%; padding: 1%; margin: 1%; border-radius: 10px;">
@@ -61,7 +52,7 @@
     <div class="row">
         <ul id="dashboard_nav_bar" class="nav nav-pills nav-justified justify-content-center"
             style="width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%;">
-            <li id="participant" >
+            <li id="participant">
                 <form action="manage_participant" method="post" style="margin-left: 2px; margin-bottom: -5px"
                       id="manage_participant">
                     {{csrf_field()}}
@@ -98,22 +89,22 @@
     </div>
 
     <div class="row"
-         style="background-color: white; width: 98%; padding-left: 1%; padding-right: 1%; padding-top: 1%; margin-left: 1%; margin-right: 1%; display: none" align="right" id="show_search_worker_btn">
+         style="background-color: white; width: 98%; padding-left: 1%; padding-right: 1%; padding-top: 1%; margin-left: 1%; margin-right: 1%; display: none"
+         id="show_search_worker_btn">
 
-        {{--<div class="col-md-12">--}}
-        <form action="vacancy_status" method="post" style="float: right">
-            {{csrf_field()}}
-            <input type="hidden" name="event_information" value="{{$event_information}}"/>
-            <input type="hidden" name="event_id" value="{{$event_id}}"/>
+        <div class="col-md-12" align="right">
+            <form action="vacancy_status" method="post" style="float: right">
+                {{csrf_field()}}
+                <input type="hidden" name="event_id" value="{{$event_id}}"/>
+                <button type="submit" class="form-control btn btn-primary"
+                        style="padding-left: 30px; padding-right: 30px; display: none; width: fit-content; margin-left: 10px"
+                        id="show_vacancy_status_btn"><b>Vacancy Status</b></button>
+            </form>
+
             <button type="submit" class="form-control btn btn-primary"
-                    style="padding-left: 30px; padding-right: 30px; display: none; width: fit-content; margin-left: 10px"
-                    id="show_vacancy_status_btn"><b>Vacancy Status</b></button>
-        </form>
-
-        <button type="submit" class="form-control btn btn-primary"
-                style="padding-left: 30px; padding-right: 30px; width: fit-content; float: right;"
-                data-toggle="modal" data-target="#searchWorkerModal"><b>Search Worker</b></button>
-        {{--</div>--}}
+                    style="padding-left: 30px; padding-right: 30px; width: fit-content; float: right;"
+                    data-toggle="modal" data-target="#searchWorkerModal"><b>Search Worker</b></button>
+        </div>
     </div>
     <div class="row"
          style="background-color: white; width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%;">
@@ -122,7 +113,7 @@
 
         <form action="add_vacancy" method="post" align="right">
             {{csrf_field()}}
-            <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
             <input type="hidden" name="event_id" value="{{$event_id}}"/>
             <a href="#" id="add_vacancy" onclick="$(this).closest('form').submit()"><img
                         src="/images/ic_add_vacancy.png"
@@ -130,6 +121,7 @@
         </form>
     </div>
     @if($vacancies != null)
+
         <div id="datatable" class="row"
              style="display: none; background-color: white; width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%; padding-bottom: 1%">
             {{--<div class="col-md-12">--}}
@@ -150,17 +142,32 @@
                     <td class="center">
                         <form action="update_vacancy" method="post">
                             {{csrf_field()}}
-                            <input type="hidden" name="event_information" value="{{$event_information}}"/>
                             <input type="hidden" name="event_id" value="{{$event_id}}"/>
                             <input type="hidden" name="vacant_roles" value="{{$vacant_roles}}"/>
                             <input type="hidden" name="description" value="{{$vacancies->description}}"/>
                             <a href="#" onclick="$(this).closest('form').submit()"><img src="/images/ic_edit.png"
-                                                                                        style="width: 60px; height: 40px; margin-top: 10px"/></a>
+                                                                                        style="width: 70px; height: 45px; margin-top: 10px"/></a>
                         </form>
                         <br>
-                        <a href="#myModal" onclick="showModal('{{$event_information}}', '{{$event_id}}')"
-                           data-toggle="modal"><img src="/images/ic_delete.png"
-                                                    style="width: 65px; height: 45px; margin-bottom: 10px;"/></a><br>
+
+                        <form action="/change_vacancy_status" method="post">
+                            {{csrf_field()}}
+                            <input type="hidden" name="event_id" value="{{$event_id}}"/>
+                            <input type="hidden" name="vacancy_id" value="{{$vacancies->id}}"/>
+                            <a href="#" onclick="$(this).closest('form').submit()">
+                                @if($vacancies->open)
+                                    <input type="hidden" name="action" value="0"/>
+                                    <img src="/images/ic_open.png"
+                                         style="width: 50px; height: 50px; margin-bottom: 10px;"/>
+                                @else
+                                    <input type="hidden" name="action" value="1"/>
+                                    <img src="/images/ic_close.png"
+                                         style="width: 50px; height: 50px; margin-bottom: 10px;"/>
+                                @endif
+                            </a>
+
+                            <br>
+                        </form>
                     </td>
                 </tr>
                 </tbody>
@@ -168,35 +175,6 @@
             {{--</div>--}}
         </div>
     @endif
-</div>
-
-
-<!-- Delete Vacancy MODAL -->
-<div class="modal fade" id="myModal" role="dialog">
-    <form action="delete_vacancy" method="post">
-        {{csrf_field()}}
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Delete Confirmation</h4>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="event_id" id="event_id"/>
-                    <input type="hidden" name="event_information" value="{{$event_information}}"/>
-                    Are you sure you want to delete vacancy for "<b><span id="event_name"></span></b>" event?
-                </div>
-
-                <div class="modal-footer">
-
-                    <button type="submit" class="btn btn-danger">Delete</button>
-
-                    <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </form>
 </div>
 
 <!-- Search worker modal-->
@@ -246,7 +224,7 @@
                         </div>
 
                         <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                        <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-default">Submit</button>
                         </div>

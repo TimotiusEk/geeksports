@@ -96,8 +96,6 @@
                                                    value="{{$sponsor_management->event_id}}"/>
                                             <input type="hidden" name="company_id"
                                                    value="{{$sponsor_management->company_id}}"/>
-                                            <input type="hidden" name="event_information"
-                                                   value="{{$event_information}}"/>
                                             <button type="submit" class="form-control btn btn-primary" name="action"
                                                     value="Deal"><b>Deal</b>
                                             </button>

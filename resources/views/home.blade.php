@@ -18,24 +18,30 @@
 <body style="background-color: whitesmoke">
 
 
-<button type="submit" class="form-control btn btn-primary"
-        style="position: relative; left: 88%; padding-left: 70px; padding-right: 70px; width: fit-content;"
-        id="filter_btn" data-toggle="modal" data-target="#myModal"><b>Filter</b></button>
-@if(count($events) != 0)
-    @for($idx = 0 ; $idx < count($events) ; $idx++)
-        <div class="container"
-             style="background-color: white; border-radius: 10px; border-color: #491217; width: 99%; margin: 1%">
-            <div class="row">
-                <div class="col-md-4 text-center">
-                    <img style=" height: 225px; width: 400px; border-radius: 10px; margin-top: 15px;"
-                            src="/images/event_brochure/{{($events[$idx])->brochure}}"/>
+<div class="container"
+     style="width: 90%;">
+    <div class="row" align="right">
+        <button type="submit" class="form-control btn btn-primary"
+                style="padding-left: 70px; padding-right: 70px; width: fit-content;"
+                id="filter_btn" data-toggle="modal" data-target="#myModal"><b>Filter</b></button>
+    </div>
+    @if(count($events) != 0)
+        @for($idx = 0 ; $idx < count($events) ; $idx++)
+
+            <div class="row" style="background-color: white; margin-top: 2%; border-radius: 10px;">
+                <div class="col-md-5 text-center">
+                    <img style=" height: 225px; width: 400px; margin-top: 23px;"
+                         src="/images/event_brochure/{{($events[$idx])->brochure}}"/>
                 </div>
-                <div class="col-md-8" style="font-size: 40px; vertical-align: top;">
+                <div class="col-md-7" style="font-size: 40px; vertical-align: top;">
                     <div style="margin-left: 70px">
                         <p style="margin-top: 20px; margin-left: -30px;"><b><a
-                                        href="/event_details?event_id={{($events[$idx])->id}}" style="color: black">{{($events[$idx])->name}}</a></b>
+                                        href="/event_details?event_id={{($events[$idx])->id}}"
+                                        style="color: black">{{($events[$idx])->name}}</a></b>
                         </p>
-                        <p style="font-size: 18px; margin-top: -10px; margin-left: -23px;">By: <a href="/view_profile?user_id={{($events[$idx]->event_organizer)->user_idnote}}">{{($events[$idx]->event_organizer)->display_name}}</a></p>
+                        <p style="font-size: 18px; margin-top: -10px; margin-left: -23px;">By: <a
+                                    href="/view_profile?user_id={{($events[$idx]->event_organizer)->user_idnote}}">{{($events[$idx]->event_organizer)->display_name}}</a>
+                        </p>
                         <hr>
                         <div style="font-size: 23px; margin-top: -10px"><img src="images/ic_location.png"
                                                                              style="width: 30px; margin-right: 10px; margin-bottom: 10px;"> @if($city_name[$idx] != null){{$city_name[$idx]}} @else
@@ -59,10 +65,10 @@
                     </div>
                 </div>
             </div>
-        </div>
-    @endfor
-@endif
 
+        @endfor
+    @endif
+</div>
 <!-- MODAL -->
 <div class="Event Filter">
     <div class="modal fade" id="myModal" role="dialog">

@@ -59,7 +59,7 @@
 
 
     <input type="hidden" name="event_id" value="{{$event_id}}"/>
-    <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
 
     <div class="form-group">
         <button type="submit" class="form-control btn btn-primary"><b>Register</b></button>

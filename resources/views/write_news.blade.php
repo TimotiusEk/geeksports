@@ -43,7 +43,7 @@
         <form method="post" action="manage_news" name="myForm" id="myForm" onsubmit="validateForm()">
             {{csrf_field()}}
             <input type="hidden" name="event_id" value="{{$event_id}}"/>
-            <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
         </form>
     @endif
 @endif
@@ -68,7 +68,7 @@
 
     @if(isset($event_id))
         <input type="hidden" name="event_id" value="{{$event_id}}"/>
-        <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
     @endif
     <button type="submit" class="form-control btn btn-primary" style="margin-top: 3%" name="status" value="Draft"><b>Save
             as Draft</b></button>

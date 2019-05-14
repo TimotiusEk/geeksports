@@ -189,7 +189,7 @@
             {{csrf_field()}}
             <a href="#" onclick="$(this).closest('form').submit()">
                 <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                 <img src="/images/ic_add_news.png"
                      style="width: 160px;" align="right"
                      id="write_news"></a>
@@ -201,7 +201,7 @@
             <form action="write_news" method="post">
                 {{csrf_field()}}
                 <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                 <button type="submit" class="form-control btn btn-primary"
                         style="width: fit-content; padding-left: 30px; padding-right: 30px; display: none"
                         id="write_news_btn">
@@ -244,7 +244,7 @@
                                 {{csrf_field()}}
                                 <input type="hidden" name="news_id" value="{{($news[$idx])->id}}"/>
                                 <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                                <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                                 <a href="#" onclick="$(this).closest('form').submit()"><img src="/images/ic_edit.png"
                                                                                             style="width: 60px; height: 40px;"/>
                                 </a>
@@ -258,7 +258,7 @@
                                 {{csrf_field()}}
                                 <input type="hidden" name="news_id" value="{{($news[$idx])->id}}"/>
                                 <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                                <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                                 <a href="#" onclick="$(this).closest('form').submit()"><img src="/images/ic_publish.png"
                                                                                             style="width: 65px; height: 45px; margin-left: 3px"/></a>
                             </form>
@@ -292,7 +292,7 @@
                 <div class="modal-body">
                     <input type="hidden" name="news_id" id="news_id"/>
                     <input type="hidden" name="event_id" id="event_id"/>
-                    <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                     Are you sure you want to delete news "<b><span id="news_title"></span></b>" for "<b><span
                                 id="event_name"></span></b>" event?
                 </div>

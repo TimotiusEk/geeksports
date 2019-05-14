@@ -115,7 +115,7 @@
 
         <form action="add_package" method="post" align="right">
             {{csrf_field()}}
-            <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
             <input type="hidden" name="event_id" value="{{$event_id}}"/>
             <a href="#" onclick="$(this).closest('form').submit()"><img src="/images/ic_add_package.png"
                                                                         style="width: 160px;"></a>
@@ -128,7 +128,7 @@
             <form action="add_package" method="post"
                   style="width: 166px;">
                 {{csrf_field()}}
-                <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                 <input type="hidden" name="event_id" value="{{$event_id}}"/>
                 <button type="submit" class="form-control btn btn-primary"
                         style="padding-left: 30px; padding-right: 30px;"><b>Add Package</b></button>
@@ -139,7 +139,7 @@
                 <form action="sponsor_status" method="post">
                 {{csrf_field()}}
 
-                    <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                 <input type="hidden" name="event_id" value="{{$event_id}}"/>
                 <button type="submit" class="form-control btn btn-primary"
                         style="padding-left: 30px; padding-right: 30px; width: fit-content; "
@@ -180,7 +180,7 @@
                     <td valign="center" class="center"
                         style="width: 1px; height: 96%; padding-top: 2%; padding-bottom: 2%">
                         <form action="update_package" method="post">
-                            <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                             <input type="hidden" name="event_id" value="{{$event_id}}"/>
                             <input type="hidden" name="package_id" value="{{($packages[$idx])->id}}"/>
                             {{csrf_field()}}
@@ -214,7 +214,7 @@
                 <div class="modal-body">
                     <input type="hidden" name="package_id" id="package_id"/>
                     <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                    <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                     Are you sure you want to delete <b><span id="package_name"></span></b> package in "<b><span
                                 id="event_name"></span></b>" event?
                 </div>
@@ -260,7 +260,7 @@
                             @endforeach
                         </div>
 
-                        <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
                         <input type="hidden" name="event_id" value="{{$event_id}}"/>
                         <input type="text" class="form-control" placeholder="Type your keyword (Optional)"
                                name="keyword">

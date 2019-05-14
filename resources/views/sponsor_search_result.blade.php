@@ -52,7 +52,7 @@
                     @endif
 
                     <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                    <input type="hidden" name="event_information" value="{{$event_information}}"/>
+
 
 
                     <button type="submit" class="btn btn-primary text-right"
@@ -123,7 +123,6 @@
                                         <input type="hidden" name="company_id"
                                                value="{{($companies[$idx])->id}}"/>
                                         <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                                        <input type="hidden" name="event_information" value="{{$event_information}}"/>
 
                                         @if($status[$status_idx] == null)
                                             <button type="submit" class="form-control btn btn-primary"><b>Broadcast
@@ -178,7 +177,6 @@
                             @endforeach
                         </div>
 
-                        <input type="hidden" name="event_information" value="{{$event_information}}"/>
                         <input type="hidden" name="event_id" value="{{$event_id}}"/>
                         <input type="text" class="form-control" placeholder="Type your keyword (Optional)"
                                name="keyword" value="{{$keyword}}">
