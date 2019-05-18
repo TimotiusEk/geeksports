@@ -54,15 +54,23 @@
             tab = id;
             var no_register_button = false;
             //tab 'all' but already registered
-            if((events[idx])["status"] === "all_registered"){
+            if ((events[idx])["status"] === "all_registered") {
                 no_register_button = true;
                 (events[idx])["status"] = "all";
             }
 
+
+            if((events[idx])["status"] === "all" && !no_register_button && !((events[idx])["open_vacancy"])){
+                console.log(((events[idx])["open_vacancy"]));
+                (events[idx])["status"] = "ignore";
+            }
+
             if ((events[idx])["status"] === id) {
-                if(no_register_button){
+
+                if (no_register_button) {
                     tab = "all_registered";
                 }
+
 
                 content += '<div class="row" style="margin-bottom: 15px; background-color: white; border-radius: 10px; padding-bottom: 1%">' +
                     '            <div class="col-md-4 text-center"><img' +
@@ -70,8 +78,8 @@
                     '                        src="/images/event_brochure/' + (events[idx])["brochure"] + '"/></div>' +
                     '            <div class="col-md-8" style="font-size: 40px; vertical-align: top;">' +
                     '                <div style="margin-left: 70px">' +
-                    '                    <p style="margin-top: 20px; margin-left: -30px;"><b><a href="/event_details?event_id=ev'+(events[idx])["id"]+'">' + (events[idx])["name"] + '</a></b></p>';
-                if ((tab === "all" || tab === "invited") && (events[idx])["open_vacancy"] === 1) {
+                    '                    <p style="margin-top: 20px; margin-left: -30px;"><b><a href="/event_details?event_id=ev' + (events[idx])["id"] + '">' + (events[idx])["name"] + '</a></b></p>';
+                if ((tab === "all" || tab === "invited")) {
                     content += '                    <form action="vacancy_registration_form" method="GET" style="margin-top: -60px">' +
                         '                        <input type="hidden" name="event_id" value="' + (events[idx])["id"] + '"/>' +
                         '                        <a href="#" onclick="$(this).closest(\'form\').submit()"><img' +
@@ -79,7 +87,7 @@
                         '                    </form>' +
                         '<hr style="margin-top: 70px">';
                 } else {
-                    content += '<p align="right" style="margin-top: -20px; font-size: 22px"><b>Vacancy Closed</b></p><hr style="margin-top: 10px">';
+                    content += '<hr style="margin-top: 10px">';
                 }
 
 
@@ -89,13 +97,13 @@
                     '                    </div>' +
                     '                    <div style="font-size: 23px; margin-top: -10px"><img src="images/ic_location.png"' +
                     '                                                                         style="width: 30px; margin-right: 10px; margin-bottom: 10px;"> ';
-                    if(city_names[idx] === undefined){
-                        content += " - ";
-                    } else {
-                        content += city_names[idx];
-                    }
+                if (city_names[idx] === undefined) {
+                    content += " - ";
+                } else {
+                    content += city_names[idx];
+                }
 
-                    content += '                    </div>' +
+                content += '                    </div>' +
                     '                    <div style="font-size: 23px; margin-bottom: 10px"><img src="images/ic_datetime.png"' +
                     '                                                                           style="width: 30px; margin-right: 10px; margin-top: -5px">';
                 if ((events[idx])["start_date"] != null) {

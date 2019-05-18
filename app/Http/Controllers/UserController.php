@@ -129,7 +129,7 @@ class UserController extends Controller
             foreach ($subrole_id as $id) {
                 $subrole_name = (Subrole::find($id))->name;
 
-                if ($subrole_name == "Professional Player" || $subrole_name == "E-Sport Enthusiast") {
+                if ($subrole_name == "E-Sport Player" || $subrole_name == "E-Sport Enthusiast") {
                     $is_gamer = true;
                 } else {
                     $is_worker = true;
@@ -192,15 +192,31 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        $user = User::select('id')->where('username', '=', $request->input('username'))->where('password', '=', hash('md5', $request->input('password')))->get();
+        $user = User::select('id', 'role_id')->where('username', '=', $request->input('username'))->where('password', '=', hash('md5', $request->input('password')))->first();
 
-        if (count($user) == 0) {
+        if (is_null($user)) {
             return response()->view('login_failed', compact('data'), 200)
                 ->header("Refresh", "3;url=/");
         } else {
-            Cookie::queue("user_id", ($user[0])["id"], 180);
-            $user = User::select('role_id')->where('id', ($user[0])["id"])->first();
+            Cookie::queue("user_id", $user->id, 180);
             $role = Role::select('name')->where('id', $user->role_id)->first();
+
+            $user_subrole = UserSubroleConnector::where('user_id', $user->id)->where('subrole_id', (Subrole::select('id')->where('name', 'E-Sport Player')->first())->id)->first();
+
+            if (is_null($user_subrole)) {
+                Cookie::queue("gamer", "false", 180);
+            } else {
+                Cookie::queue("gamer", "true", 180);
+            }
+
+
+            $user_subrole = UserSubroleConnector::where('user_id', $user->id)->where('subrole_id', '!=', (Subrole::select('id')->where('name', 'E-Sport Player')->first())->id)->where('subrole_id', '!=', (Subrole::select('id')->where('name', 'E-Sport Enthusiast')->first())->id)->first();
+
+            if (is_null($user_subrole)) {
+                Cookie::queue("worker", "false", 180);
+            } else {
+                Cookie::queue("worker", "true", 180);
+            }
 
             Cookie::queue("role_name", $role->name, 180);
 
@@ -212,8 +228,10 @@ class UserController extends Controller
     {
         Cookie::queue(Cookie::forget("user_id"));
         Cookie::queue(Cookie::forget("role_name"));
+        Cookie::queue(Cookie::forget("player"));
+        Cookie::queue(Cookie::forget("worker"));
 
-        return redirect('/');
+        return redirect('/index.php');
     }
 
     public function showUpdateProfileForm()
@@ -231,7 +249,7 @@ class UserController extends Controller
                 $subrole_name = (Subrole::select('name')->find($user_subrole->subrole_id))->name;
 
 
-                if ($subrole_name == "Professional Player") {
+                if ($subrole_name == "E-Sport Player") {
                     $is_gamer = true;
                 } else if ($subrole_name != "E-Sport Enthusiast") {
                     $is_worker = true;
@@ -287,7 +305,7 @@ class UserController extends Controller
 
                 $user_subrole->save();
 
-                if ($subrole_name == "Professional Player") {
+                if ($subrole_name == "E-Sport Player") {
                     $is_gamer = true;
                 } else if ($subrole_name != "E-Sport Enthusiast") {
                     $is_worker = true;
@@ -392,7 +410,7 @@ class UserController extends Controller
         $user_subroles = UserSubroleConnector::select('subrole_id')->where('user_id', Input::get('user_id'))->get();
         $edit = false;
 
-        if(Input::get('user_id') == Cookie::get('user_id')){
+        if (Input::get('user_id') == Cookie::get('user_id')) {
             $edit = true;
         }
 
@@ -403,11 +421,11 @@ class UserController extends Controller
             for ($idx = 0; $idx < count($user_subroles); $idx++) {
                 $subrole_name = (Subrole::select('name')->find(($user_subroles[$idx])->subrole_id))->name;
 
-                if ($subrole_name == "Professional Player") {
+                if ($subrole_name == "E-Sport Player") {
                     $is_gamer = true;
                 }
 
-                if ($subrole_name != "Professional Player" && $subrole_name != "E-Sport Enthusiast") {
+                if ($subrole_name != "E-Sport Player" && $subrole_name != "E-Sport Enthusiast") {
                     $is_worker = true;
                 }
             }
@@ -469,14 +487,16 @@ class UserController extends Controller
                     }
                 }
 
-                foreach ($user->events as $event) {
-                    $vacancy_managements = VacancyManagement::select('vacancy_id', 'subrole_id')->where('action', 'Confirm')->where('worker_id', $user->id)->where('vacancy_id', (Vacancy::select('id')->where('event_id', $event->id)->first())->id)->get();
+                if (!is_null($user->events)) {
+                    foreach ($user->events as $event) {
+                        $vacancy_managements = VacancyManagement::select('vacancy_id', 'subrole_id')->where('action', 'Confirm')->where('worker_id', $user->id)->where('vacancy_id', (Vacancy::select('id')->where('event_id', $event->id)->first())->id)->get();
 
-                    for ($idx = 0; $idx < count($vacancy_managements); $idx++) {
-                        if ($idx == 0) {
-                            $event->subrole = (Subrole::select('name')->find(($vacancy_managements[$idx])->subrole_id))->name;
-                        } else {
-                            $event->subrole .= "," . (Subrole::select('name')->find(($vacancy_managements[$idx])->subrole_id))->name;
+                        for ($idx = 0; $idx < count($vacancy_managements); $idx++) {
+                            if ($idx == 0) {
+                                $event->subrole = (Subrole::select('name')->find(($vacancy_managements[$idx])->subrole_id))->name;
+                            } else {
+                                $event->subrole .= "," . (Subrole::select('name')->find(($vacancy_managements[$idx])->subrole_id))->name;
+                            }
                         }
                     }
                 }

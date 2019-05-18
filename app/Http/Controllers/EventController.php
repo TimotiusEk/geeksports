@@ -98,7 +98,7 @@ class EventController extends Controller
 
     public function addVacancyPage(Request $request)
     {
-        $subroles = Subrole::where('name', '!=', 'E-Sport Enthusiast')->where('name', '!=', 'Professional Player')->get();
+        $subroles = Subrole::where('name', '!=', 'E-Sport Enthusiast')->where('name', '!=', 'E-Sport Player')->get();
         if ($request->subrole_id == null) {
             return view('add_vacancy', ['subroles' => $subroles, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id)]);
         } else {
@@ -141,7 +141,7 @@ class EventController extends Controller
 
     public function updateVacancyPage(Request $request)
     {
-        $subroles = Subrole::where('name', '!=', 'E-Sport Enthusiast')->where('name', '!=', 'Professional Player')->get();
+        $subroles = Subrole::where('name', '!=', 'E-Sport Enthusiast')->where('name', '!=', 'E-Sport Player')->get();
         if ($request->subrole_id == null) {
             $vacant_roles = explode(", ", $request->vacant_roles);
 
@@ -320,7 +320,7 @@ class EventController extends Controller
         $profile_picture_idx = 0;
         $status = array(); //invited or not
         $status_idx = 0;
-        $all_subroles = Subrole::where('name', '!=', 'E-Sport Enthusiast')->where('name', '!=', 'Professional Player')->get();
+        $all_subroles = Subrole::where('name', '!=', 'E-Sport Enthusiast')->where('name', '!=', 'E-Sport Player')->get();
 
 
         //search by subrole
@@ -410,7 +410,7 @@ class EventController extends Controller
                         foreach ($user_subrole_connector as $value) {
                             $subrole = (Subrole::select('name')->find($value->subrole_id))->name;
 
-                            if ($subrole != "Professional Player" && $subrole != "E-Sport Enthusiast") {
+                            if ($subrole != "E-Sport Player" && $subrole != "E-Sport Enthusiast") {
                                 $user_id[$user_id_idx] = $id_->user_id;
                                 $user_id_idx++;
                             }
@@ -476,7 +476,7 @@ class EventController extends Controller
                     foreach ($user_subrole_connector as $value) {
                         $subrole = (Subrole::select('name')->find($value->subrole_id))->name;
 
-                        if ($subrole != "Professional Player" && $subrole != "E-Sport Enthusiast") {
+                        if ($subrole != "E-Sport Player" && $subrole != "E-Sport Enthusiast") {
                             $user_id[$user_id_idx] = $worker->user_id;
                             $user_id_idx++;
                         }
@@ -516,7 +516,7 @@ class EventController extends Controller
                 foreach ($user_subrole_connector as $value) {
                     $subrole = (Subrole::select('name')->find($value->subrole_id))->name;
 
-                    if ($subrole != "Professional Player" && $subrole != "E-Sport Enthusiast") {
+                    if ($subrole != "E-Sport Player" && $subrole != "E-Sport Enthusiast") {
                         $user_id[$user_id_idx] = $worker->user_id;
                         $user_id_idx++;
                     }
@@ -1115,7 +1115,7 @@ class EventController extends Controller
     public function showManageVacancyPage(Request $request)
     {
         $vacancies = Vacancy::where("event_id", $request->event_id)->first();
-        $subroles = Subrole::where('name', '!=', 'E-Sport Enthusiast')->where('name', '!=', 'Professional Player')->get();
+        $subroles = Subrole::where('name', '!=', 'E-Sport Enthusiast')->where('name', '!=', 'E-Sport Player')->get();
 
         $vacant_roles = "";
 
@@ -1134,11 +1134,13 @@ class EventController extends Controller
         $vacant_roles_arr = array();
         $vacancy_idx = 0;
 
-        foreach ($vacancies->getFillable() as $fillable) {
-            if ($fillable != "id" && $fillable != "event_id" && $fillable != "description") {
-                if ($vacancies->$fillable == 1) {
-                    $vacant_roles_arr[$vacancy_idx] = ucfirst($fillable);
-                    $vacancy_idx++;
+        if (!is_null($vacancies)) {
+            foreach ($vacancies->getFillable() as $fillable) {
+                if ($fillable != "id" && $fillable != "event_id" && $fillable != "description") {
+                    if ($vacancies->$fillable == 1) {
+                        $vacant_roles_arr[$vacancy_idx] = ucfirst($fillable);
+                        $vacancy_idx++;
+                    }
                 }
             }
         }
@@ -1753,7 +1755,7 @@ class EventController extends Controller
         //retrieve vacancies based on user's subroles
         for ($user_subroles_idx = 0; $user_subroles_idx < count($user_subroles); $user_subroles_idx++) {
             $subrole_name = (Subrole::select('name')->find(($user_subroles[$user_subroles_idx])->subrole_id))->name;
-            if ($subrole_name != "Professional Player") {
+            if ($subrole_name != "E-Sport Player") {
                 if ($user_subroles_idx == 0) {
                     $vacancies = $vacancies->where(strtolower((Subrole::select('name')->find(($user_subroles[$user_subroles_idx])->subrole_id))->name), 1);
                 } else {
@@ -1808,6 +1810,17 @@ class EventController extends Controller
 
             foreach ($vacancy_managements as $vacancy_management) {
                 if ($vacancy_management->action == "Register") {
+                    if ((strpos($vacant_roles[$idx], "Registered")) === false) {
+                        $vacant_roles[$idx] = "Registered as ";
+                    }
+
+
+                    //replace vacant roles to registered roles
+                    $subrole = Subrole::select('name')->find($vacancy_management->subrole_id);
+
+
+                    $vacant_roles[$idx] .= $subrole->name .", ";
+
                     ($events[$idx])->status = "all_registered";
                 }
             }
@@ -1893,7 +1906,6 @@ class EventController extends Controller
                 $event_id[$event_id_idx] = $vacancy->event_id;
                 $event_id_idx++;
             }
-
 
             $vacant_roles[$idx] = rtrim($vacant_roles[$idx], ", ");
 
@@ -2218,7 +2230,7 @@ class EventController extends Controller
 
                         //check if the invited user has registered
                         foreach ($event_game_connector as $event_game) {
-                            $pm  = ParticipantManagement::where('event_game_id', $event_game->id)->where('gamer_id', $participant_management->gamer_id)->where('action', 'Register')->first();
+                            $pm = ParticipantManagement::where('event_game_id', $event_game->id)->where('gamer_id', $participant_management->gamer_id)->where('action', 'Register')->first();
 
                             if (!is_null($pm)) {
                                 $registered = true;
@@ -2335,7 +2347,7 @@ class EventController extends Controller
                     foreach ($user_subrole_connector as $value) {
                         $subrole = (Subrole::select('name')->find($value->subrole_id))->name;
 
-                        if ($subrole == "Professional Player") {
+                        if ($subrole == "E-Sport Player") {
                             $user_id[$user_id_idx] = $id->user_id;
                             $user_id_idx++;
                         }
@@ -2401,7 +2413,7 @@ class EventController extends Controller
                     foreach ($user_subrole_connector as $value) {
                         $subrole = (Subrole::select('name')->find($value->subrole_id))->name;
 
-                        if ($subrole == "Professional Player") {
+                        if ($subrole == "E-Sport Player") {
                             $user_id[$user_id_idx] = $gamer->user_id;
                             $user_id_idx++;
                         }
@@ -2442,7 +2454,7 @@ class EventController extends Controller
                 foreach ($user_subrole_connector as $value) {
                     $subrole = (Subrole::select('name')->find($value->subrole_id))->name;
 
-                    if ($subrole == "Professional Player") {
+                    if ($subrole == "E-Sport Player") {
                         $user_id[$user_id_idx] = $gamer->user_id;
                         $user_id_idx++;
                     }
@@ -3034,7 +3046,8 @@ class EventController extends Controller
         return view('search_event_location', ['q' => Input::get('q'), 'event_locations' => $event_locations]);
     }
 
-    public function changeVacancyStatus(Request $request){
+    public function changeVacancyStatus(Request $request)
+    {
         $vacancy = Vacancy::find($request->vacancy_id);
 
         $vacancy->open = $request->action;

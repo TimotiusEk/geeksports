@@ -91,8 +91,14 @@
     <div class="row"
          style="background-color: white; width: 98%; padding-left: 1%; padding-right: 1%; padding-top: 1%; margin-left: 1%; margin-right: 1%; display: none"
          id="show_search_worker_btn">
+        <div class="col-md-3">
+            @if(!is_null($vacancies) && !$vacancies->open) <p style="color: red; font-size: 24px"><b>(Vacancy
+                    Closed)</b></p>@endif
+        </div>
 
-        <div class="col-md-12" align="right">
+        <div class="col-md-9" align="right">
+
+
             <form action="vacancy_status" method="post" style="float: right">
                 {{csrf_field()}}
                 <input type="hidden" name="event_id" value="{{$event_id}}"/>
@@ -155,12 +161,12 @@
                             <input type="hidden" name="event_id" value="{{$event_id}}"/>
                             <input type="hidden" name="vacancy_id" value="{{$vacancies->id}}"/>
                             <a href="#" onclick="$(this).closest('form').submit()">
-                                @if($vacancies->open)
-                                    <input type="hidden" name="action" value="0"/>
+                                @if(!$vacancies->open)
+                                    <input type="hidden" name="action" value="1"/>
                                     <img src="/images/ic_open.png"
                                          style="width: 50px; height: 50px; margin-bottom: 10px;"/>
                                 @else
-                                    <input type="hidden" name="action" value="1"/>
+                                    <input type="hidden" name="action" value="0"/>
                                     <img src="/images/ic_close.png"
                                          style="width: 50px; height: 50px; margin-bottom: 10px;"/>
                                 @endif

@@ -12,7 +12,6 @@
         });
 
         function fillActionInputAndSubmit(action) {
-            alert(action);
             $("#action").val(action);
             document.getElementById("sponsorship_response_form").submit();
         }

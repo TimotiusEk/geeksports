@@ -17,7 +17,9 @@
     </style>
 
     <script>
+        @if($edit == true)
         document.getElementById("profile").className = 'active';
+        @endif
     </script>
 </head>
 <body style="background-color: whitesmoke">
@@ -25,8 +27,9 @@
     <div class="row" align="center" style="background-color: white; border-radius: 10px;">
         <img src="/images/profile_picture/{{$user->profile_picture}}" width="150px" height="150px" class="img-circle"
              style="margin-top: 20px"/>
-        <p style="font-size: 50px">{{$user->display_name}} @if($edit == true)<img src="/images/ic_edit_no_text.png"
-                                                                                  width="25px"/>@endif</p>
+        <p style="font-size: 50px">{{$user->display_name}} @if($edit == true)<a
+                    href="update_profile?user_id={{$user->user_id}}"><img src="/images/ic_edit_no_text.png"
+                                                                          width="25px"/></a>@endif</p>
         <p style="font-size: 25px; margin-top: -15px; margin-bottom: 45px">{{$user->subrole}}</p>
         <div style="background-color: #f4f4f4; font-size: 23px; padding: 2%; margin: 1%">
             <pre style="font-size: 23px; border-width: 0px; font-family: 'Arial';"

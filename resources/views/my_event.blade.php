@@ -139,16 +139,18 @@
                                 <div class="row">
                                     <div class="col-md-7">
                                         <b><a
-                                                    href="/event_details?event_id={{($events[$idx])->id}}" style="color: black">{{($events[$idx])->name}}</a>
+                                                    href="/event_details?event_id={{($events[$idx])->id}}"
+                                                    style="color: black">{{($events[$idx])->name}}</a>@if(($events[$idx])->status == "Draft") <p style="color: red; font-size: 20px">(In Draft)</p>@endif
                                         </b>
                                     </div>
+
                                     <div class="col-md-5" align="right">
                                         <span style="float: right">
                                         <a href="#myModal"
                                            onclick="showModal('{{($events[$idx])->name}}', '{{($events[$idx])->id}}')"
                                            data-toggle="modal"><img
-                                                    src="/images/delete_btn.png"
-                                                    style="width: 100px; height: 40px;"/></a>
+                                                    src="/images/ic_delete.png"
+                                                    style="width: 60px; height: 50px;"/></a>
                                         </span>
 
                                         <span style="float: right">
@@ -156,8 +158,8 @@
                                             {{csrf_field()}}
                                             <input type="hidden" value="{{($events[$idx])->id}}" name="event_id"/>
                                             <a href="#" onclick="$(this).closest('form').submit()"><img
-                                                        src="/images/edit_btn.png"
-                                                        style="width: 100px; height: 40px; margin-right: 10px"/>
+                                                        src="/images/ic_edit.png"
+                                                        style="width: 60px; height: 50px; margin-right: 10px"/>
                                             </a>
                                         </form>
                                         </span>
@@ -167,12 +169,33 @@
                                             {{csrf_field()}}
                                             <input type="hidden" value="{{($events[$idx])->id}}" name="event_id"/>
                                             <a href="#" onclick="$(this).closest('form').submit()"><img
-                                                        src="/images/manage_btn.png"
-                                                        style="width: 100px; height: 40px; margin-right: 10px"/>
+                                                        src="/images/ic_manage.png"
+                                                        style="width: 60px; height: 50px; margin-right: 10px"/>
                                             </a>
                                         </form>
                                             </span>
 
+                                        <span style="float: right">
+                                            @if(($events[$idx])->status == "Published")
+                                                <form action="unpublish_event" method="post">
+                                            {{csrf_field()}}
+                                                    <input type="hidden" value="{{($events[$idx])->id}}" name="event_id"/>
+                                            <a href="#" onclick="$(this).closest('form').submit()"><img
+                                                        src="/images/ic_unpublish.png"
+                                                        style="width: 70px; height: 50px; margin-right: 10px"/>
+                                            </a>
+                                        </form>
+                                            @else
+                                                <form action="publish_event" method="post">
+                                            {{csrf_field()}}
+                                                    <input type="hidden" value="{{($events[$idx])->id}}" name="event_id"/>
+                                            <a href="#" onclick="$(this).closest('form').submit()"><img
+                                                        src="/images/ic_publish.png"
+                                                        style="width: 70px; height: 50px; margin-right: 10px"/>
+                                            </a>
+                                        </form>
+                                            @endif
+                                            </span>
                                     </div>
                                 </div>
                                 <div class="row" style="margin-top: -20px">
@@ -192,14 +215,11 @@
                                                                     style="width: 30px; margin-right: 10px; margin-top: -5px">
                                     @if(($games[$idx]) != null){{$games[$idx]}} @else - @endif
                                 </div>
-
                             </div>
                         </div>
                     </div>
+                </div>
             </td>
-
-
-            {{--<td class="center">{{($events[$idx])->status}}</td>--}}
         </tr>
     @endfor
     </tbody>
@@ -233,20 +253,6 @@
     </form>
 </div>
 
-
-<!-- Show Image Modal -->
-<div id="imageModal" class="modal_2">
-
-    <!-- The Close Button -->
-    <span class="close">&times;</span>
-
-    <!-- Modal Content (The Image) -->
-    <img class="modal-content" id="img01">
-
-    <!-- Modal Caption (Image Text) -->
-    <div id="caption"></div>
-</div>
-
 <script>
     $(document).ready(function () {
         $('#table_id').DataTable({
@@ -261,29 +267,6 @@
         $("th").addClass("dt-head-center");
         $("td.center").addClass("dt-body-center");
     });
-</script>
-<script>
-    function showBrochure(id) {
-        // Get the modal
-        var modal = document.getElementById('imageModal');
-
-        // Get the image and insert it inside the modal - use its "alt" text as a caption
-        var img = document.getElementById(id);
-        var modalImg = document.getElementById("img01");
-        var captionText = document.getElementById("caption");
-
-        modal.style.display = "block";
-        modalImg.src = img.src;
-        captionText.innerHTML = img.alt;
-
-        // Get the <span> element that closes the modal
-        var span = document.getElementsByClassName("close")[1];
-
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            modal.style.display = "none";
-        }
-    }
 </script>
 </body>
 </html>
