@@ -62,7 +62,7 @@
     <input type="hidden" name="event_organizer_id" value="{{$event_organizer->id}}"/>
 
     <div class="form-group has-feedback" style="margin-top: 50px">
-        <button type="submit" class="form-control btn btn-primary"><b>Save</b></button>
+        <button type="submit" class="btn btn-primary"><b>Save</b></button>
     </div>
 </form>
 </body>

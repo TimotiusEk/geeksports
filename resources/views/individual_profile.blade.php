@@ -34,6 +34,36 @@
     </div>
 
     <div class="form-group">
+        <b><label>Gender</label></b><br>
+        <div class="container-fluid">
+            <div class="col-sm-4"><input type="radio" name="gender" value="m"
+                                         @if($individual->gender == "m") checked @endif>Male
+            </div>
+            <div class="col-sm-4"><input type="radio" name="gender" value="f"
+                                         @if($individual->gender == "f") checked @endif>Female
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <b><label>Date of Birth</label></b>
+        <div class="inner-addon left-addon">
+            <i class="glyphicon glyphicon-calendar"></i>
+            <input type="date" class="form-control" name="dob" value="{{$individual->dob}}"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <b><label>City</label></b><br>
+        <select class="city form-control" name="city_id" id="mySelect2"
+                style="width: 100%">
+            @if(!is_null($individual->city_id))
+                <option value="{{$individual->city_id}}" selected>{{$individual->city}}</option>
+            @endif
+        </select>
+    </div>
+
+    <div class="form-group">
         <b><label>Who are you?</label></b><br>
         <div class="container-fluid">
             @foreach($all_subroles as $subrole)
@@ -50,7 +80,8 @@
         <select class="cari form-control" name="game_id[]" multiple="multiple" id="mySelect2"
                 style="width: 100%" required>
             @for($idx = 0 ; $idx < count($individual->user_game) ; $idx++)
-                <option value="{{(($individual->user_game)[$idx])->game_id}}" selected>{{(($individual->game)[$idx])->name}}</option>
+                <option value="{{(($individual->user_game)[$idx])->game_id}}"
+                        selected>{{(($individual->game)[$idx])->name}}</option>
             @endfor
 
         </select>
@@ -76,7 +107,7 @@
     </div>
 
     <div class="form-group has-feedback">
-        <button type="submit" class="form-control btn btn-primary"><b>Save</b></button>
+        <button type="submit" class="btn btn-primary"><b>Save</b></button>
     </div>
 </form>
 
@@ -86,6 +117,26 @@
         placeholder: 'Type its Name',
         ajax: {
             url: '/search_game',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            text: item.name,
+                            id: item.id
+                        }
+                    })
+                };
+            },
+            cache: true
+        }
+    });
+
+    $('.city').select2({
+        placeholder: 'Type here...',
+        ajax: {
+            url: '/search_city',
             dataType: 'json',
             delay: 250,
             processResults: function (data) {

@@ -13,6 +13,11 @@
             }
         }
     </script>
+        @include('nav_header')
+
+        <script>
+            $("#fh5co-page").hide();
+        </script>
 </head>
 <body>
 <form id="registration_form" method="post" action="registration_2" onsubmit="return validateForm();">
@@ -64,7 +69,7 @@
 
 
     <div class="form-group has-feedback">
-        <button type="submit" class="form-control btn btn-primary"><b>Next Step <span
+        <button type="submit" class="btn btn-primary"><b>Next Step <span
                         class="glyphicon glyphicon-btn glyphicon-arrow-right form-control-feedback"></span></b></button>
     </div>
 </form>

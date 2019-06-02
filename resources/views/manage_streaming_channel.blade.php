@@ -25,6 +25,16 @@
         pre {
             white-space: pre-wrap;
         }
+
+        .nav-pills > li.active > a, .nav-pills > li.active > a:focus {
+            color: white;
+            background-color: #1FB57B;
+        }
+
+        .nav-pills > li.active > a:hover {
+            background-color: #1FB57B;
+            color: white;
+        }
     </style>
 
 </head>
@@ -38,14 +48,19 @@
 <div class="container-fluid" style="margin-right: -10px">
     <div class="row" style="background-color: white; width: 98%; padding: 1%; margin: 1%; border-radius: 10px;">
         <div class="col-md-4 text-center">
-            <img style=" height: 225px; width: 400px; border-radius: 10px;"
-                 src="/images/event_brochure/{{$event->brochure}}"/>
+            @if(!is_null($event->brochure))
+                <img style=" height: 225px; width: 400px; border-radius: 10px;"
+                     src="/images/event_brochure/{{$event->brochure}}"/>
+            @else
+                <img style=" height: 225px; width: 400px; border-radius: 10px;"
+                     src="/images/default_event_img.png"/>
+            @endif
         </div>
         <div class="col-md-8" style="font-size: 40px; vertical-align: top;">
             <div style="margin-left: 70px">
-                <p style="margin-top: 10px; margin-left: -30px;">
+                <p style="margin-top: 10px;">
                     <b>
-                        <a href="event_details?event_id={{$event->id}}" style="color: black">{{$event->name}}</a>
+                        <a href="event_details?event_id={{$event->id}}" style="color: black; font-size: 30px">{{$event->name}}</a>
                     </b>
                 </p>
                 <hr>

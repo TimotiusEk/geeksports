@@ -14,5 +14,5 @@ use Illuminate\Database\Eloquent\Model;
 class Gamer extends Model
 {
     public $timestamps = false;
-    protected $fillable = ['id', 'display_name', 'description', 'profile_picture','user_id'];
+    protected $fillable = ['id', 'display_name', 'gender', 'dob', 'description', 'profile_picture','user_id'];
 }

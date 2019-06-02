@@ -2,12 +2,16 @@
 <head>
     <?php include 'php/required_css.php'; ?>
     <?php include 'php/required_js.php'; ?>
+    @include('nav_header')
 
     <script>
-        function validateForm(){
+        $("#fh5co-page").hide();
+    </script>
+    <script>
+        function validateForm() {
             checked = $("input[type=checkbox]:checked").length;
 
-            if(checked == 0){
+            if (checked == 0) {
                 alert('At Least 1 Industry Must be Picked!');
                 return false;
             }
@@ -45,7 +49,8 @@
 
         <div class="container-fluid">
             @foreach($industries as $industry)
-                <div class="col-sm-4"><input type="checkbox" value="{{$industry->id}}" name="industry_id[]"> {{$industry->name}}</div>
+                <div class="col-sm-4"><input type="checkbox" value="{{$industry->id}}"
+                                             name="industry_id[]"> {{$industry->name}}</div>
             @endforeach
         </div>
     </div>
@@ -56,7 +61,7 @@
     </div>
 
     <div class="form-group has-feedback">
-        <button type="submit" class="form-control btn btn-primary"><b>Register</b></button>
+        <button type="submit" class="btn btn-primary" style="margin-top: 20px"><b>Register</b></button>
     </div>
 
     <input type="hidden" name="email" value="{{$email}}"/>

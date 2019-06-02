@@ -6,7 +6,7 @@
     <?php include 'php/datatables.php'; ?>
 </head>
 <body>
-<h1 style="margin-left: 1%; font-size: 35px"><b>Add Sponsorship Package</b></h1>
+<h1 style="margin-left: 1%; font-size: 35px; margin-top: 1%"><b>Add Sponsorship Package</b></h1>
 <hr style="height:1px;border:none;color:#333;background-color:#333; width: 99%">
 <h2 style="margin-left: 1%; font-size: 30px">{{$event_information}}</h2>
 
@@ -44,7 +44,7 @@
     <input type="hidden" name="event_id" value="{{$event_id}}"/>
 
 
-    <button type="submit" class="form-control btn btn-primary" style="margin-top: 35px"><b>Add Package</b></button>
+    <button type="submit" class="btn btn-primary" style="margin-top: 35px"><b>Add Package</b></button>
 </form>
 
 @if(isset($success))

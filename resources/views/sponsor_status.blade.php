@@ -17,7 +17,7 @@
     </style>
 </head>
 <body>
-<h1 style="font-size: 35px; margin-left: 1%;"><b>Sponsor Status</b></h1>
+<h1 style="font-size: 35px; margin-left: 1%; margin-top: 1%"><b>Sponsor Status</b></h1>
 <hr style="height:1px;border:none;color:#333;background-color:#333; width: 99%">
 <h2 style="margin-left: 1%; font-size: 30px; margin-bottom: 20px">{{$event_information}}</h2>
 
@@ -39,27 +39,31 @@
                         @foreach($sponsor_managements as $sponsor_management)
                             @if($sponsor_management->action == "Deal")
 
+                                <div class="col-md-4 text-center">
+                                    <div class="work-inner">
+                                        @if(!is_null(($companies[$industry_idx])->company_logo))
+                                            <a href="/view_profile?user_id={{($companies[$industry_idx])->user_id}}"
+                                               class="work-grid"
+                                               style="background-image: url(/images/company_logo/{{($companies[$industry_idx])->company_logo}}); background-size: contain; background-repeat: no-repeat;"></a>
+                                        @else
+                                            <a href="/view_profile?user_id={{($companies[$industry_idx])->user_id}}"
+                                               class="work-grid"
+                                               style="background-image: url(/images/default_event_img.png); background-size: contain; background-repeat: no-repeat;"></a>
+                                        @endif
 
-                                <div class="col-md-2"
-                                     style="background-color: #eaffea; border-radius: 5px; border: 1px outset #18253d;width: 350px; margin: 1%; padding: 1%">
-                                    <div align="center">
-                                        <img src="/images/company_logo/{{($companies[$industry_idx])->company_logo}}"
-                                             width="100px"
-                                             height="100px"/>
-                                    </div>
-                                    <div align="center" style="font-size: 20px; margin-top: 10px;">
-                                        <b>{{($companies[$industry_idx])->company_name}}</b>
-                                    </div>
-                                    <div align="center" style="font-size: 20px; margin-top: 10px;">
-                                        {{$company_industries[$industry_idx]}}
-                                        @php $industry_idx++; @endphp
+                                        <div class="desc">
+                                            <h3>
+                                                <a href="/view_profile?user_id={{($companies[$industry_idx])->user_id}}">{{($companies[$industry_idx])->company_name}}</a>
+                                            </h3>
+
+                                            <div style="margin-top: -20px">( {{$company_industries[$industry_idx]}})
+                                            </div>
+                                            @php $industry_idx++; @endphp
+                                        </div>
                                     </div>
                                 </div>
-
                             @endif
                         @endforeach
-
-
                     </div>
             </td>
         </tr>
@@ -75,31 +79,38 @@
 
                         @foreach($sponsor_managements as $sponsor_management)
                             @if($sponsor_management->action == "Interested")
-                                <div class="col-md-2"
-                                     style="background-color: #eaffea; border-radius: 5px; border: 1px outset #18253d;width: 350px; margin: 1%; padding: 1%">
-                                    <div align="center">
-                                        <img src="/images/company_logo/{{($companies[$industry_idx])->company_logo}}"
-                                             width="100px" height="100px"/>
-                                    </div>
-                                    <div align="center" style="font-size: 20px; margin-top: 10px;">
-                                        <b>{{($companies[$industry_idx])->company_name}}</b>
-                                    </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="work-inner">
+                                        @if(!is_null(($companies[$industry_idx])->company_logo))
+                                            <a href="/view_profile?user_id={{($companies[$industry_idx])->user_id}}"
+                                               class="work-grid"
+                                               style="background-image: url(/images/company_logo/{{($companies[$industry_idx])->company_logo}}); background-size: contain; background-repeat: no-repeat;"></a>
+                                        @else
+                                            <a href="/view_profile?user_id={{($companies[$industry_idx])->user_id}}"
+                                               class="work-grid"
+                                               style="background-image: url(/images/default_event_img.png); background-size: contain; background-repeat: no-repeat;"></a>
+                                        @endif
 
-                                    <div align="center" style="font-size: 20px; margin-top: 10px;">
-                                        {{$company_industries[$industry_idx]}}
-                                        @php $industry_idx++; @endphp
-                                    </div>
-                                    <div align="center" style="margin-top: 30px">
-                                        <form action="sponsor_status" method="post">
-                                            {{csrf_field()}}
-                                            <input type="hidden" name="event_id"
-                                                   value="{{$sponsor_management->event_id}}"/>
-                                            <input type="hidden" name="company_id"
-                                                   value="{{$sponsor_management->company_id}}"/>
-                                            <button type="submit" class="form-control btn btn-primary" name="action"
-                                                    value="Deal"><b>Deal</b>
-                                            </button>
-                                        </form>
+                                        <div class="desc">
+                                            <h3>
+                                                <a href="/view_profile?user_id={{($companies[$industry_idx])->user_id}}">{{($companies[$industry_idx])->company_name}}</a>
+                                            </h3>
+
+                                            <div>( {{$company_industries[$industry_idx]}})
+                                            </div>
+                                            @php $industry_idx++; @endphp
+
+                                            <form action="sponsor_status" method="post" style="margin-top: 20px">
+                                                {{csrf_field()}}
+                                                <input type="hidden" name="event_id"
+                                                       value="{{$sponsor_management->event_id}}"/>
+                                                <input type="hidden" name="company_id"
+                                                       value="{{$sponsor_management->company_id}}"/>
+                                                <button type="submit" class="btn btn-primary" name="action"
+                                                        value="Deal" style="width: 100%"><b>Deal</b>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             @endif
@@ -119,19 +130,27 @@
                     <div class="row">
                         @foreach($sponsor_managements as $sponsor_management)
                             @if($sponsor_management->action == "Not Interested")
-                                <div class="col-md-2"
-                                     style="background-color: #eaffea; border-radius: 5px; border: 1px outset #18253d;width: 350px; margin: 1%; padding: 1%">
-                                    <div align="center">
-                                        <img src="/images/company_logo/{{($companies[$industry_idx])->company_logo}}"
-                                             width="100px"
-                                             height="100px"/>
-                                    </div>
-                                    <div align="center" style="font-size: 20px; margin-top: 10px;">
-                                        <b>{{($companies[$industry_idx])->company_name}}</b>
-                                    </div>
-                                    <div align="center" style="font-size: 20px; margin-top: 10px;">
-                                        {{$company_industries[$industry_idx]}}
-                                        @php $industry_idx++; @endphp
+                                <div class="col-md-4 text-center">
+                                    <div class="work-inner">
+                                        @if(!is_null(($companies[$industry_idx])->company_logo))
+                                            <a href="/view_profile?user_id={{($companies[$industry_idx])->user_id}}"
+                                               class="work-grid"
+                                               style="background-image: url(/images/company_logo/{{($companies[$industry_idx])->company_logo}}); background-size: contain; background-repeat: no-repeat;"></a>
+                                        @else
+                                            <a href="/view_profile?user_id={{($companies[$industry_idx])->user_id}}"
+                                               class="work-grid"
+                                               style="background-image: url(/images/default_event_img.png); background-size: contain; background-repeat: no-repeat;"></a>
+                                        @endif
+
+                                        <div class="desc">
+                                            <h3>
+                                                <a href="/view_profile?user_id={{($companies[$industry_idx])->user_id}}">{{($companies[$industry_idx])->company_name}}</a>
+                                            </h3>
+
+                                            <div>( {{$company_industries[$industry_idx]}})
+                                            </div>
+                                            @php $industry_idx++; @endphp
+                                        </div>
                                     </div>
                                 </div>
                             @endif
@@ -151,20 +170,27 @@
                     <div class="row">
                         @foreach($sponsor_managements as $sponsor_management)
                             @if($sponsor_management->action == "Invite")
-                                <div class="col-md-2"
-                                     style="background-color: #eaffea; border-radius: 5px; border: 1px outset #18253d;width: 350px; margin: 1%; padding: 1%">
-                                    <div align="center">
-                                        <img src="/images/company_logo/{{($companies[$industry_idx])->company_logo}}"
-                                             width="100px"
-                                             height="100px"/>
-                                    </div>
-                                    <div align="center" style="font-size: 20px; margin-top: 10px;">
-                                        <b>{{($companies[$industry_idx])->company_name}}</b>
-                                    </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="work-inner">
+                                        @if(!is_null(($companies[$industry_idx])->company_logo))
+                                            <a href="/view_profile?user_id={{($companies[$industry_idx])->user_id}}"
+                                               class="work-grid"
+                                               style="background-image: url(/images/company_logo/{{($companies[$industry_idx])->company_logo}}); background-size: contain; background-repeat: no-repeat;"></a>
+                                        @else
+                                            <a href="/view_profile?user_id={{($companies[$industry_idx])->user_id}}"
+                                               class="work-grid"
+                                               style="background-image: url(/images/default_event_img.png); background-size: contain; background-repeat: no-repeat;"></a>
+                                        @endif
 
-                                    <div align="center" style="font-size: 20px; margin-top: 10px;">
-                                        {{$company_industries[$industry_idx]}}
-                                        @php $industry_idx++; @endphp
+                                        <div class="desc">
+                                            <h3>
+                                                <a href="/view_profile?user_id={{($companies[$industry_idx])->user_id}}">{{($companies[$industry_idx])->company_name}}</a>
+                                            </h3>
+
+                                            <div>( {{$company_industries[$industry_idx]}})
+                                            </div>
+                                            @php $industry_idx++; @endphp
+                                        </div>
                                     </div>
                                 </div>
                             @endif

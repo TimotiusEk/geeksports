@@ -75,7 +75,7 @@
     @endif
 
     <input type="hidden" name="news_id" value="{{$news->id}}"/>
-    <button type="submit" class="form-control btn btn-primary" style="margin-top: 3%" name="status" value="Draft"><b>Update
+    <button type="submit" class="btn btn-primary" style="margin-top: 3%" name="status" value="Draft"><b>Update
             Draft</b></button>
 </form>
 

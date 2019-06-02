@@ -14,5 +14,5 @@ use Illuminate\Database\Eloquent\Model;
 class VacancyManagement extends Model
 {
     public $timestamps = false;
-    protected $fillable = ["id", "action", "vacancy_id", "worker_id", "subrole_id"];
+    protected $fillable = ["id", "action", "message", "vacancy_id", "worker_id", "subrole_id"];
 }

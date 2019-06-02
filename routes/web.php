@@ -64,6 +64,7 @@ Route::get('/manage_participant', 'EventController@showManageParticipantPage');
 Route::post('/manage_participant', 'EventController@showManageParticipantPage');
 Route::get('/search_player', 'UserController@searchPlayer');
 //Route::post('/register_for_event', 'EventController@registerForEvent');
+Route::get('/sponsor_search_result', 'EventController@showSponsorSearchResultPage');
 Route::post('/sponsor_search_result', 'EventController@showSponsorSearchResultPage');
 Route::post('/worker_search_result', 'EventController@showWorkerSearchResultPage');
 Route::get('/search_game', 'EventController@searchGame');
@@ -114,6 +115,7 @@ Route::post('/update_profile', 'UserController@updateProfile');
 Route::get('/event_location_details', 'EventController@showEventLocationDetailsPage');
 Route::get('/view_profile', 'UserController@showViewProfilePage');
 Route::post('/change_vacancy_status', 'EventController@changeVacancyStatus');
+Route::post('/send_proposal', 'EventController@sendProposal');
 
 
 

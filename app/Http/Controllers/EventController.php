@@ -201,6 +201,7 @@ class EventController extends Controller
         if ($request->action != null) {
             $vacancy_management = new VacancyManagement;
             $vacancy_management->action = $request->action;
+            $vacancy_management->message = $request->message;
             $vacancy_management->vacancy_id = $vacancy->id;
             $vacancy_management->worker_id = $request->worker_id;
             $vacancy_management->subrole_id = $request->subrole_id;
@@ -222,6 +223,23 @@ class EventController extends Controller
 
         foreach ($vacancy_managements as $vacancy_management) {
             $worker = Worker::find($vacancy_management->worker_id);
+
+            $worker->age = null;
+            if (!is_null(($worker)->dob)) {
+                $d1 = new DateTime($worker->dob);
+                $d2 = new DateTime();
+                $diff = $d2->diff($d1);
+
+                $worker->age = $diff->y;
+            }
+
+
+            $city = City::select('name')->find($worker->city_id);
+            $worker->city = null;
+
+            if (!is_null($city)) {
+                $worker->city = $city->name;
+            }
 
             $user_id = (Worker::find($vacancy_management->worker_id))->user_id;
 
@@ -315,9 +333,15 @@ class EventController extends Controller
         $subroles = array();
         $subroles_idx = 0;
         $display_name = array();
-        $display_name_idx = 0;
+
         $profile_picture = array();
-        $profile_picture_idx = 0;
+
+        $user_gender = array();
+
+        $age = array();
+
+        $user_city = array();
+
         $status = array(); //invited or not
         $status_idx = 0;
         $all_subroles = Subrole::where('name', '!=', 'E-Sport Enthusiast')->where('name', '!=', 'E-Sport Player')->get();
@@ -347,25 +371,34 @@ class EventController extends Controller
             foreach ($user_subrole_connector as $user) {
                 $users_games_connector = UserGameConnector::select('game_id')->where('user_id', $user->user_id)->get();
 
-                $user_id[$user_id_idx] = $user->user_id;
-                $user_id_idx++;
-
-                foreach ($users_games_connector as $game) {
-                    $games = Games::select('name')->where("id", $game->game_id)->get();
-
-
-                    foreach ($games as $game) {
-                        if (!isset($user_games[$game_name_idx])) {
-                            $user_games[$game_name_idx] = "";
-                        }
-
-                        $user_games[$game_name_idx] .= $game->name;
-                        $user_games[$game_name_idx] .= ", ";
-                    }
+                $worker = Worker::select('id');
+                if (!is_null($request->city_id)) {
+                    $worker = $worker->where('city_id', $request->city_id);
+                } else if (!is_null($request->gender)) {
+                    $worker = $worker->where('gender', $request->gender);
                 }
 
-                $user_games[$game_name_idx] = rtrim($user_games[$game_name_idx], ", ");
-                $game_name_idx++;
+                if (!is_null($worker->where('user_id', $user->user_id)->first())) {
+                    $user_id[$user_id_idx] = $user->user_id;
+                    $user_id_idx++;
+
+                    foreach ($users_games_connector as $game) {
+                        $games = Games::select('name')->where("id", $game->game_id)->get();
+
+
+                        foreach ($games as $game) {
+                            if (!isset($user_games[$game_name_idx])) {
+                                $user_games[$game_name_idx] = "";
+                            }
+
+                            $user_games[$game_name_idx] .= $game->name;
+                            $user_games[$game_name_idx] .= ", ";
+                        }
+                    }
+
+                    $user_games[$game_name_idx] = rtrim($user_games[$game_name_idx], ", ");
+                    $game_name_idx++;
+                }
             }
         }
 
@@ -507,7 +540,7 @@ class EventController extends Controller
             }
         }
 
-        if ($request->subrole_id == null && $request->game_id == null && $request->keyword == "") {
+        if ($request->subrole_id == null && $request->game_id == null && $request->keyword == "" && is_null($request->gender) && is_null($request->city_id)) {
             $workers = Worker::select('user_id')->get();
 
             foreach ($workers as $worker) {
@@ -547,7 +580,7 @@ class EventController extends Controller
         }
 
 
-        //subrole based on selected users
+//        subrole based on selected users
         if (count($user_id) != 0) {
             foreach ($user_id as $id) {
 
@@ -570,31 +603,51 @@ class EventController extends Controller
 
         }
 
-        //display name based on selected users
+//        display name based on selected users
         if (count($user_id) != 0) {
+            $idx = 0;
             foreach ($user_id as $id) {
-                $worker = Worker::select('display_name', 'profile_picture')->where('user_id', $id)->first();
+                $worker = Worker::select('display_name', 'profile_picture', 'gender', 'dob', 'city_id')->where('user_id', $id)->first();
 
-                $display_name[$display_name_idx] = $worker->display_name;
+                $display_name[$idx] = $worker->display_name;
 
-                $display_name_idx++;
+                $profile_picture[$idx] = $worker->profile_picture;
 
-                $profile_picture[$profile_picture_idx] = $worker->profile_picture;
+                $user_gender[$idx] = $worker->gender;
 
-                $profile_picture_idx++;
+                $age[$idx] = null;
+                if (!is_null($worker->dob)) {
+                    $d1 = new DateTime($worker->dob);
+                    $d2 = new DateTime();
+
+                    $diff = $d2->diff($d1);
+
+                    $age[$idx] = $diff->y;
+                }
+
+                $user_city[$idx] = City::select('name')->find($worker->city_id);
+
+                if (!is_null($user_city[$idx])) {
+                    $user_city[$idx] = ($user_city[$idx])->name;
+                }
+
+                $idx++;
             }
 
         }
 
-        //status (invited or not)
+
+//        status (invited or not)
         if (count($user_id) != 0) {
+
             foreach ($user_id as $id) {
                 $vacancy_id = (Vacancy::where('event_id', $request->event_id)->first())->id;
 
                 $worker = Worker::where('user_id', $id)->first();
+
                 $vacancy_management = VacancyManagement::select('id')->where('action', "Invite")->where('worker_id', $worker->id)->where('vacancy_id', $vacancy_id)->first();
                 $check_if_registered = VacancyManagement::select('id')->where('action', "Register")->where('worker_id', $worker->id)->where('vacancy_id', $vacancy_id)->first();
-                if ($vacancy_management == null && is_null($check_if_registered)) {
+                if (is_null($vacancy_management) && is_null($check_if_registered)) {
                     $status[$status_idx] = null;
                 } elseif (!is_null($check_if_registered)) {
                     $status[$status_idx] = "Register";
@@ -602,11 +655,28 @@ class EventController extends Controller
                     $status[$status_idx] = "Invite";
                 }
 
+
                 $status_idx++;
             }
         }
 
-        return view('worker_search_result', ['all_subroles' => $all_subroles, 'subroles' => $subroles, 'subrole_name' => $subrole_name, 'game_id' => $game_id, 'game_name' => $game_name, 'keyword' => $request->keyword, 'display_names' => $display_name, 'user_games' => $user_games, 'subroles' => $subroles, 'user_id' => $user_id, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'subrole_id' => $request->subrole_id, 'game_id' => $request->game_id, 'status' => $status, 'profile_picture' => $profile_picture]);
+        $gender = "Any";
+
+        if ($request->gender == "m") {
+            $gender = "Male";
+        } else if ($request->gender == "f") {
+            $gender = "Female";
+        }
+
+        $city = City::select('id', 'name')->find($request->city_id);
+
+        if (is_null($city)) {
+            $city = new City;
+            $city->name = "Any";
+        }
+
+
+        return view('worker_search_result', ['all_subroles' => $all_subroles, 'subroles' => $subroles, 'subrole_name' => $subrole_name, 'game_id' => $game_id, 'game_name' => $game_name, 'gender' => $gender, 'city' => $city, 'keyword' => $request->keyword, 'display_names' => $display_name, 'age' => $age, 'user_gender' => $user_gender, 'user_city' => $user_city, 'user_games' => $user_games, 'user_id' => $user_id, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'subrole_id' => $request->subrole_id, 'game_id' => $request->game_id, 'status' => $status, 'profile_picture' => $profile_picture]);
     }
 
 
@@ -1429,11 +1499,20 @@ class EventController extends Controller
             $event->event_organizer = EventOrganizer::select('user_id', 'display_name')->find($event->event_organizer_id);
         }
 
+
         return view('home', ['events' => $events, 'games' => $games_name, 'city_name' => $cities_name, 'user_games' => $user_games, 'filter' => $request->filter]);
     }
 
     public function reindexing($array)
     {
+       $max_idx = -1;
+
+       foreach($array as $k => $val){
+           if($max_idx < $k) {
+               $max_idx = $k;
+           }
+       }
+
         if (count($array) != 0) {
             $new_idx = 0;
 
@@ -1442,10 +1521,16 @@ class EventController extends Controller
                 $new_idx++;
             }
 
-            for ($idx = $new_idx; $idx < count($array); $idx++) {
+            for ($idx = $new_idx; $idx <= $max_idx; $idx++) {
                 unset($array[$idx]);
             }
         }
+
+        if (is_array($array)) {
+            ksort($array);
+        }
+
+
 
         return $array;
     }
@@ -1453,11 +1538,12 @@ class EventController extends Controller
     public function inviteWorker(Request $request)
     {
         $vacancy = Vacancy::where('event_id', $request->event_id)->first();
-        $worker = Worker::where('user_id', $request->user_id)->first();
 
         if (!is_array($request->user_id)) {
             $vacancy_management = new VacancyManagement;
+            $worker = Worker::where('user_id', $request->user_id)->first();
             $vacancy_management->action = "Invite";
+            $vacancy_management->message = $request->message;
             $vacancy_management->vacancy_id = $vacancy->id;
             $vacancy_management->worker_id = $worker->id;
 
@@ -1474,7 +1560,7 @@ class EventController extends Controller
             }
         }
 
-        return view('invite_worker', ["user_id" => $request->user_id, "event_id" => $request->event_id, "event_information" => $this->getEventInformation($request->event_id), "subrole_id" => $request->subrole_id, "game_id" => $request->game_id, "keyword" => $request->keyword]);
+        return view('invite_worker', ["user_id" => $request->user_id, "event_id" => $request->event_id, "event_information" => $this->getEventInformation($request->event_id), "subrole_id" => $request->subrole_id, "game_id" => $request->game_id, "keyword" => $request->keyword, "gender" => $request->gender, "city_id" => $request->city_id]);
     }
 
     public function broadcastPackage(Request $request)
@@ -1591,10 +1677,8 @@ class EventController extends Controller
             $participated_team->teams = array();
             $team_idx = 0;
             foreach ($participant_managements as $participant_management) {
-                ($participated_team->teams)[$team_idx] = Team::select('team_name', 'team_logo')->find($participant_management->team_id);
-                /**
-                 * todo: retrieve team members
-                 */
+                ($participated_team->teams)[$team_idx] = Team::select('id', 'team_name', 'team_logo')->find($participant_management->team_id);
+
                 $team_idx++;
             }
         }
@@ -1743,10 +1827,12 @@ class EventController extends Controller
 
         $vacancies = new Vacancy;
         $events = array();
+        $event_organizers = array();
         $city_names = array();
         $games = array();
 
         $idx = 0;
+        $eo_idx = 0;
 
         $worker_id = (Worker::where('user_id', Cookie::get('user_id'))->first())->id;
         $user_subroles = UserSubroleConnector::select('subrole_id')->where('user_id', Cookie::get('user_id'))->get();
@@ -1770,6 +1856,8 @@ class EventController extends Controller
             $vacant_roles[$idx] = "";
             $games[$idx] = "";
             $events[$idx] = Event::find($vacancy->event_id);
+            $event_organizers[$eo_idx] = EventOrganizer::select('display_name', 'user_id')->find(($events[$idx])->event_organizer_id);
+            $eo_idx++;
             ($events[$idx])->open_vacancy = $vacancy->open;
 
 
@@ -1819,7 +1907,7 @@ class EventController extends Controller
                     $subrole = Subrole::select('name')->find($vacancy_management->subrole_id);
 
 
-                    $vacant_roles[$idx] .= $subrole->name .", ";
+                    $vacant_roles[$idx] .= $subrole->name . ", ";
 
                     ($events[$idx])->status = "all_registered";
                 }
@@ -1845,6 +1933,9 @@ class EventController extends Controller
             $vacancy = Vacancy::find($vacancy_management->vacancy_id);
 
             $events[$idx] = Event::find($vacancy->event_id);
+
+            $event_organizers[$eo_idx] = EventOrganizer::select('display_name', 'user_id')->find(($events[$idx])->event_organizer_id);
+            $eo_idx++;
 
             if (($events[$idx])->city_id != null) {
                 $city_names[$idx] = (City::where("id", ($events[$idx])->city_id)->first())->name;
@@ -1875,6 +1966,11 @@ class EventController extends Controller
 
             ($events[$idx])->details = $vacancy->description;
 
+            if (!is_null($vacancy_management->message)) {
+                ($events[$idx])->details = $vacancy_management->message;
+            } else {
+                ($events[$idx])->details = $vacancy->description;
+            }
 
             if ($vacancy_management->action == "Invite") {
                 ($events[$idx])->status = "invited";
@@ -1902,7 +1998,6 @@ class EventController extends Controller
 
                 $vacant_roles[$idx] .= $subrole->name;
 
-
                 $event_id[$event_id_idx] = $vacancy->event_id;
                 $event_id_idx++;
             }
@@ -1914,7 +2009,8 @@ class EventController extends Controller
             $idx++;
         }
 
-        return view('vacancy', ['events' => $events, 'vacant_roles' => $vacant_roles, 'city_names' => $city_names, 'games' => $games]);
+
+        return view('vacancy', ['events' => $events, 'event_organizers' => $event_organizers, 'vacant_roles' => $vacant_roles, 'city_names' => $city_names, 'games' => $games]);
     }
 
     public function showVacancyRegistrationForm(Request $request)
@@ -2041,6 +2137,7 @@ class EventController extends Controller
 
         $sponsorship_packages = SponsorshipPackage::get();
         $events = array();
+        $event_organizers = array();
         $city_names = array();
         $games = array();
 
@@ -2062,7 +2159,7 @@ class EventController extends Controller
 
                     $games[$idx] = "";
                     $events[$idx] = Event::find($sponsorship_package->event_id);
-
+                    $event_organizers[$idx] = EventOrganizer::select('display_name', 'user_id')->find(($events[$idx])->event_organizer_id);
 
                     if (!is_null(($events[$idx])->city_id)) {
                         $city_names[$idx] = (City::find(($events[$idx])->city_id))->name;
@@ -2104,39 +2201,82 @@ class EventController extends Controller
 
                 $games[$idx] = rtrim($games[$idx], ", ");
 
-                if (!is_null(SponsorshipManagement::where("event_id", $sponsorship_package->event_id)->where("company_id", $company_id)->where("action", "Interested")->first())) {
+                if (!is_null(SponsorshipManagement::where("event_id", $sponsorship_package->event_id)->where("company_id", $company_id)->where("action", "Interested")->where("proposal", "!=", 1)->first())) {
                     ($events[$idx])->status = "all_interested";
                     $idx++;
 
                     $events[$idx] = clone $events[$idx - 1];
+                    $event_organizers[$idx] = EventOrganizer::select('display_name', 'user_id')->find(($events[$idx])->event_organizer_id);
                     ($events[$idx])->status = "Interested";
                     $games[$idx] = $games[$idx - 1];
                     $city_names[$idx] = $city_names[$idx - 1];
-                } else if (!is_null(SponsorshipManagement::where("event_id", $sponsorship_package->event_id)->where("company_id", $company_id)->where("action", "Deal")->first())) {
+                } else if (!is_null(SponsorshipManagement::where("event_id", $sponsorship_package->event_id)->where("company_id", $company_id)->where("action", "Deal")->where("proposal", "!=", 1)->first())) {
                     ($events[$idx])->status = "all_deal";
                     $idx++;
 
                     $events[$idx] = clone $events[$idx - 1];
+                    $event_organizers[$idx] = EventOrganizer::select('display_name', 'user_id')->find(($events[$idx])->event_organizer_id);
                     ($events[$idx])->status = "Deal";
                     $games[$idx] = $games[$idx - 1];
                     $city_names[$idx] = $city_names[$idx - 1];
-                } else if (!is_null(SponsorshipManagement::where("event_id", $sponsorship_package->event_id)->where("company_id", $company_id)->where("action", "Not Interested")->first())) {
+                } else if (!is_null(SponsorshipManagement::where("event_id", $sponsorship_package->event_id)->where("company_id", $company_id)->where("action", "Not Interested")->where("proposal", "!=", 1)->first())) {
                     ($events[$idx])->status = "Not Interested";
-                } else if (!is_null(SponsorshipManagement::where("event_id", $sponsorship_package->event_id)->where("company_id", $company_id)->where("action", "Invite")->first())) {
+                } else if (!is_null(SponsorshipManagement::where("event_id", $sponsorship_package->event_id)->where("company_id", $company_id)->where("action", "Invite")->where("proposal", "!=", 1)->first())) {
                     $idx++;
 
                     $events[$idx] = clone $events[$idx - 1];
-                    ($events[$idx])->status = "Invited";
+                    $event_organizers[$idx] = EventOrganizer::select('display_name', 'user_id')->find(($events[$idx])->event_organizer_id);
+
+//                    ($events[$idx])-> proposal = (SponsorshipManagement::select('proposal')->where("event_id", $sponsorship_package->event_id)->where("company_id", $company_id)->where("action", "Invite")->first())->proposal;
+
+
+                    ($events[$idx])->status = "Invite";
                     $games[$idx] = $games[$idx - 1];
                     $city_names[$idx] = $city_names[$idx - 1];
                 }
-
 
                 $idx++;
             }
         }
 
-        return view('sponsorship', ['events' => $events, 'city_names' => $city_names, 'games' => $games]);
+        foreach(SponsorshipManagement::where('company_id', $company_id)->get() as $sponsorship_management){
+
+            $games[$idx] = "";
+            $events[$idx] = Event::find($sponsorship_management->event_id);
+            $event_organizers[$idx] = EventOrganizer::select('display_name', 'user_id')->find(($events[$idx])->event_organizer_id);
+
+            if (!is_null(($events[$idx])->city_id)) {
+                $city_names[$idx] = (City::find(($events[$idx])->city_id))->name;
+            } else {
+                $city_names[$idx] = "-";
+            }
+
+            $event_game_connector = EventGameConnector::select('game_id')->where("event_id", $sponsorship_management->event_id)->get();
+
+            foreach ($event_game_connector as $value) {
+                $games[$idx] .= (Games::select('name')->where('id', $value->game_id)->first())->name;
+                $games[$idx] .= ", ";
+            }
+
+            if (($events[$idx])->start_date != null) {
+                $new_date = date('d F Y', strtotime(($events[$idx])->start_date));
+                ($events[$idx])->start_date = $new_date;
+            }
+
+            if (($events[$idx])->end_date != null) {
+                $new_date = date('d F Y', strtotime(($events[$idx])->end_date));
+                ($events[$idx])->end_date = $new_date;
+            }
+
+            ($events[$idx])-> proposal = $sponsorship_management->proposal;
+
+            $games[$idx] = rtrim($games[$idx], ", ");
+
+            ($events[$idx])->status = $sponsorship_management->action;
+            $idx++;
+        }
+
+        return view('sponsorship', ['events' => $events, 'event_organizers' => $event_organizers, 'city_names' => $city_names, 'games' => $games]);
     }
 
     public function showManageParticipantPage(Request $request)
@@ -2147,6 +2287,7 @@ class EventController extends Controller
                 $participant_management_2->event_game_id = $request->event_game_id;
                 $participant_management_2->gamer_id = $participant_management->gamer_id;
                 $participant_management_2->team_id = $request->team_id;
+                $participant_management_2->message = $request->message;
                 $participant_management_2->action = $request->action;
 
                 $participant_management_2->save();
@@ -2242,6 +2383,23 @@ class EventController extends Controller
                         if (!$registered) {
                             $gamers[$gamers_idx] = Gamer::find($participant_management->gamer_id);
 
+                            ($gamers[$gamers_idx])->age = null;
+                            if (!is_null(($gamers[$gamers_idx])->dob)) {
+                                $d1 = new DateTime(($gamers[$gamers_idx])->dob);
+                                $d2 = new DateTime();
+                                $diff = $d2->diff($d1);
+
+                                ($gamers[$gamers_idx])->age = $diff->y;
+                            }
+
+
+                            $city = City::select('name')->find(($gamers[$gamers_idx])->city_id);
+                            ($gamers[$gamers_idx])->city = null;
+
+                            if (!is_null($city)) {
+                                ($gamers[$gamers_idx])->city = $city->name;
+                            }
+
                             $user_game_connector = UserGameConnector::select('game_id')->where('user_id', ($gamers[$gamers_idx])->user_id)->get();
 
                             $game_name = "";
@@ -2319,9 +2477,15 @@ class EventController extends Controller
         $user_id = array();
         $user_id_idx = 0;
         $display_name = array();
-        $display_name_idx = 0;
+
         $profile_picture = array();
-        $profile_picture_idx = 0;
+
+        $user_gender = array();
+
+        $age = array();
+
+        $user_city = array();
+
         $status = array(); //invited or not
         $status_idx = 0;
 
@@ -2341,19 +2505,21 @@ class EventController extends Controller
             //get all user id based on  game_id (param)
             foreach ($request->game_id as $id) {
                 $ids = UserGameConnector::select('user_id')->where('game_id', $id)->get();
-                foreach ($ids as $id) {
-                    $user_subrole_connector = UserSubroleConnector::select('subrole_id')->where('user_id', $id->user_id)->get();
+                foreach ($ids as $id_) {
+                    $user_subrole_connector = UserSubroleConnector::select('subrole_id')->where('user_id', $id_->user_id)->get();
 
                     foreach ($user_subrole_connector as $value) {
                         $subrole = (Subrole::select('name')->find($value->subrole_id))->name;
 
                         if ($subrole == "E-Sport Player") {
-                            $user_id[$user_id_idx] = $id->user_id;
+
+                            $user_id[$user_id_idx] = $id_->user_id;
                             $user_id_idx++;
                         }
                     }
                 }
             }
+
 
             //get games for related user_id
             foreach ($user_id as $id) {
@@ -2377,9 +2543,130 @@ class EventController extends Controller
                 $user_games[$game_name_idx] = rtrim($user_games[$game_name_idx], ", ");
                 $game_name_idx++;
             }
-
         }
 
+        //search by gender
+        if(!is_null($request->gender)){
+            if (count($user_id) != 0) {
+                $no_of_users = count($user_id);
+                for ($idx = 0; $idx < $no_of_users; $idx++) {
+                    $gamer = Gamer::select('id')->where('user_id', ($user_id[$idx]))->where('gender', $request->gender)->first();
+
+                    $found = false;
+
+                    if (!is_null($gamer)) {
+                        $found = true;
+                    }
+
+                    if (!$found) {
+                        unset($user_games[$idx]);
+                        unset($user_id[$idx]);
+                    }
+                }
+
+                $this->reindexing($user_games);
+                $this->reindexing($user_id);
+            } else if(is_null($request->game_id)) {
+                $gamers = Gamer::select('user_id')->where('gender', $request->gender)->get();
+
+                foreach ($gamers as $gamer) {
+                    $user_subrole_connector = UserSubroleConnector::select('subrole_id')->where('user_id', $gamer->user_id)->get();
+
+                    foreach ($user_subrole_connector as $value) {
+                        $subrole = (Subrole::select('name')->find($value->subrole_id))->name;
+
+                        if ($subrole == "E-Sport Player") {
+                            $user_id[$user_id_idx] = $gamer->user_id;
+                            $user_id_idx++;
+                        }
+                    }
+                }
+
+                //get games for related user_id
+                foreach ($user_id as $id) {
+                    $users_games_connector = UserGameConnector::select('game_id')->where('user_id', $id)->get();
+
+                    foreach ($users_games_connector as $game) {
+                        $games = Games::select('name')->where("id", $game->game_id)->get();
+
+
+                        foreach ($games as $game) {
+                            if (!isset($user_games[$game_name_idx])) {
+                                $user_games[$game_name_idx] = "";
+                            }
+
+                            $user_games[$game_name_idx] .= $game->name;
+                            $user_games[$game_name_idx] .= ", ";
+                        }
+                    }
+
+                    $user_games[$game_name_idx] = rtrim($user_games[$game_name_idx], ", ");
+                    $game_name_idx++;
+                }
+            }
+        }
+
+
+        //search by city
+        if(!is_null($request->city_id)){
+            if (count($user_id) != 0) {
+                $no_of_users = count($user_id);
+                for ($idx = 0; $idx < $no_of_users; $idx++) {
+                    $gamer = Gamer::select('id')->where('user_id', ($user_id[$idx]))->where('city_id', $request->city_id)->first();
+
+                    $found = false;
+
+                    if (!is_null($gamer)) {
+                        $found = true;
+                    }
+
+                    if (!$found) {
+                        unset($user_games[$idx]);
+                        unset($user_id[$idx]);
+                    }
+                }
+
+                $this->reindexing($user_games);
+                $this->reindexing($user_id);
+            } else if(is_null($request->game_id) && is_null($request->gender)) {
+                $gamers = Gamer::select('user_id')->where('city_id', $request->city_id)->get();
+
+                foreach ($gamers as $gamer) {
+                    $user_subrole_connector = UserSubroleConnector::select('subrole_id')->where('user_id', $gamer->user_id)->get();
+
+                    foreach ($user_subrole_connector as $value) {
+                        $subrole = (Subrole::select('name')->find($value->subrole_id))->name;
+
+                        if ($subrole == "E-Sport Player") {
+                            $user_id[$user_id_idx] = $gamer->user_id;
+                            $user_id_idx++;
+                        }
+                    }
+                }
+
+                //get games for related user_id
+                foreach ($user_id as $id) {
+                    $users_games_connector = UserGameConnector::select('game_id')->where('user_id', $id)->get();
+
+                    foreach ($users_games_connector as $game) {
+                        $games = Games::select('name')->where("id", $game->game_id)->get();
+
+
+                        foreach ($games as $game) {
+                            if (!isset($user_games[$game_name_idx])) {
+                                $user_games[$game_name_idx] = "";
+                            }
+
+                            $user_games[$game_name_idx] .= $game->name;
+                            $user_games[$game_name_idx] .= ", ";
+                        }
+                    }
+
+                    $user_games[$game_name_idx] = rtrim($user_games[$game_name_idx], ", ");
+                    $game_name_idx++;
+                }
+            }
+        }
 
         //search by keyword
         if ($request->keyword != "") {
@@ -2404,7 +2691,7 @@ class EventController extends Controller
 
                 $this->reindexing($user_games);
                 $this->reindexing($user_id);
-            } else {
+            } else if(is_null($request->game_id) && is_null($request->gender) && is_null($request->city_id)) {
                 $gamers = Gamer::select('user_id')->where('display_name', 'like', '%' . $request->keyword . '%')->get();
 
                 foreach ($gamers as $gamer) {
@@ -2484,19 +2771,35 @@ class EventController extends Controller
             }
         }
 
-
 //        display name based on selected users
         if (count($user_id) != 0) {
+            $idx = 0;
             foreach ($user_id as $id) {
-                $gamer = Gamer::select('profile_picture', 'display_name')->where('user_id', $id)->first();
+                $gamer = Gamer::select('profile_picture', 'display_name', 'gender', 'dob', 'city_id')->where('user_id', $id)->first();
 
-                $display_name[$display_name_idx] = $gamer->display_name;
+                $display_name[$idx] = $gamer->display_name;
 
-                $display_name_idx++;
+                $profile_picture[$idx] = $gamer->profile_picture;
 
-                $profile_picture[$profile_picture_idx] = $gamer->profile_picture;
+                $user_gender[$idx] = $gamer->gender;
 
-                $profile_picture_idx++;
+                $age[$idx] = null;
+                if (!is_null($gamer->dob)) {
+                    $d1 = new DateTime($gamer->dob);
+                    $d2 = new DateTime();
+
+                    $diff = $d2->diff($d1);
+
+                    $age[$idx] = $diff->y;
+                }
+
+                $user_city[$idx] = City::select('name')->find($gamer->city_id);
+
+                if (!is_null($user_city[$idx])) {
+                    $user_city[$idx] = ($user_city[$idx])->name;
+                }
+
+                $idx++;
             }
 
         }
@@ -2533,16 +2836,31 @@ class EventController extends Controller
             }
         }
 
-        return view('gamer_search_result', ['game_id' => $game_id, 'game_name' => $game_name, 'keyword' => $request->keyword, 'display_names' => $display_name, 'user_games' => $user_games, 'user_id' => $user_id, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'game_id' => $request->game_id, 'status' => $status, 'profile_picture' => $profile_picture]);
+        $gender = "Any";
+
+        if ($request->gender == "m") {
+            $gender = "Male";
+        } else if ($request->gender == "f") {
+            $gender = "Female";
+        }
+
+        $city = City::find($request->city_id);
+
+        if (is_null($city)) {
+            $city = new City;
+            $city->name = "Any";
+        }
+
+        return view('gamer_search_result', ['game_id' => $game_id, 'game_name' => $game_name, 'gender' => $gender, 'city' => $city, 'keyword' => $request->keyword, 'display_names' => $display_name, 'age' => $age, 'user_gender' => $user_gender, 'user_city' => $user_city, 'user_games' => $user_games, 'user_id' => $user_id, 'event_id' => $request->event_id, 'event_information' => $this->getEventInformation($request->event_id), 'status' => $status, 'profile_picture' => $profile_picture]);
     }
 
     public function inviteGamer(Request $request)
     {
-        $gamer = Gamer::where('user_id', $request->user_id)->first();
-
         if (!is_array($request->user_id)) {
+            $gamer = Gamer::where('user_id', $request->user_id)->first();
             $participant_management = new ParticipantManagement;
             $participant_management->action = "Invite";
+            $participant_management->message = $request->message;
             $participant_management->event_id = $request->event_id;
             $participant_management->gamer_id = $gamer->id;
 
@@ -2559,7 +2877,7 @@ class EventController extends Controller
             }
         }
 
-        return view('invite_gamer', ["user_id" => $request->user_id, "event_id" => $request->event_id, "event_information" => $this->getEventInformation($request->event_id), "subrole_id" => $request->subrole_id, "game_id" => $request->game_id, "keyword" => $request->keyword]);
+        return view('invite_gamer', ["user_id" => $request->user_id, "event_id" => $request->event_id, "event_information" => $this->getEventInformation($request->event_id), "subrole_id" => $request->subrole_id, "game_id" => $request->game_id, "keyword" => $request->keyword, "gender" => $request->gender, "city_id" => $request->city_id]);
     }
 
     public function showParticipantStatusPage()
@@ -2593,15 +2911,17 @@ class EventController extends Controller
                 }
 
                 $participant_management->event = $event;
+                $participant_management->event_organizer = EventOrganizer::select('display_name', 'user_id')->find($event->event_organizer_id);
             } else {
                 $event = Event::find($participant_management->event_id);
                 if (!is_null($event->city_id)) {
-
                     $event->city = (City::select('name')->find($event->city_id))->name;
                 } else {
                     $event->city = "-";
                 }
                 $participant_management->event = $event;
+
+                $participant_management->event_organizer = EventOrganizer::select('display_name', 'user_id')->find($event->event_organizer_id);
 
                 if (($participant_management->event)->start_date != null) {
                     $new_date = date('d F Y', strtotime(($participant_management->event)->start_date));
@@ -3055,5 +3375,21 @@ class EventController extends Controller
         $vacancy->save();
 
         return view('change_vacancy_status', ['event_id' => $request->event_id]);
+    }
+
+    public function sendProposal(Request $request)
+    {
+
+        if (($request->file('proposal'))->move('proposal/' . $request->event_id . '/' . (Company::select('user_id')->find($request->company_id))->user_id, 'proposal.pdf')) {
+            $sponsorship_managements = new SponsorshipManagement;
+            $sponsorship_managements->action = "Invite";
+            $sponsorship_managements->proposal = 1;
+            $sponsorship_managements->event_id = $request->event_id;
+            $sponsorship_managements->company_id = $request->company_id;
+            $sponsorship_managements->save();
+        }
+
+
+        return view('broadcast_package', ["event_id" => $request->event_id, "event_information" => $this->getEventInformation($request->event_id), "industry_id" => $request->industry_id, "keyword" => $request->keyword]);
     }
 }

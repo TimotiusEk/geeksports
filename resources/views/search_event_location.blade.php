@@ -8,16 +8,16 @@
         document.getElementById("event_location").className = 'active';
     </script>
 </head>
-<body style="background-color: whitesmoke">
+<body style="background-color: whitesmoke;">
 <div class="container">
     <div class="row">
-        <form action="search_event_location">
+        <form action="search_event_location" style="margin-top: 2%">
             <div class="container">
                 <div class="row">
                     <div class="col-xs-8 col-xs-offset-2">
                         <div class="input-group">
                             <input type="text" class="form-control" name="q" placeholder="Type here . . ."
-                                   value="{{$q}}">
+                                   value="{{$q}}" style="background-color: white">
                             <span class="input-group-btn">
                     <button class="btn btn-default" type="submit" style="height: 34px"><span
                                 class="glyphicon glyphicon-search"></span></button>
@@ -36,9 +36,9 @@
                         src="/images/{{$event_location->logo}}"/></div>
             <div class="col-md-9" style="font-size: 40px; vertical-align: top;">
                 <div style="margin-left: 70px">
-                    <p style="margin-top: 20px; margin-left: -30px;">
+                    <p style="margin-top: 20px;">
                         <b>
-                            <a href="#">
+                            <a href="#" style="color: black; font-size: 30px">
                                 {{$event_location->name}}
                             </a>
                         </b>

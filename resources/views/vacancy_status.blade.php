@@ -9,6 +9,13 @@
         $(document).ready(function () {
             $("#common").attr("disabled", "disabled");
         });
+
+        function showModal(action, worker_id, subrole_id) {
+            $("#worker_id").val(worker_id);
+            $("#subrole_id").val(subrole_id);
+            $("#action").val(action);
+            $("#action_btn").text(action);
+        }
     </script>
 
     <style>
@@ -23,11 +30,9 @@
     </style>
 </head>
 <body>
-<h1 style="font-size: 35px; margin-left: 1%;"><b>Role Vacancy Status</b></h1>
+<h1 style="font-size: 35px; margin-left: 1%; margin-top: 1%"><b>Role Vacancy Status</b></h1>
 <hr style="height:1px;border:none;color:#333;background-color:#333; width: 99%">
 <h2 style="margin-left: 1%; font-size: 30px; margin-bottom: 20px">{{$event_information}}</h2>
-
-
 
 
 <ul class="nav nav-tabs" style="margin-left: 15px; margin-right: 15px">
@@ -50,24 +55,39 @@
                                 @foreach($workers as $worker)
 
                                     @if($worker->id == $vacancy_management->worker_id)
-                                        <div class="col-md-4"
-                                             style="background-color: #eaffea; border-radius: 5px; border: 1px outset #18253d;width: 250px; height: 250px;margin: 1%; padding: 1%">
-                                            <div align="center" style="margin-top: 30px">
-                                                <a href="/view_profile?user_id={{$worker->user_id}}"><img
-                                                            src="/images/profile_picture/{{$worker->profile_picture}}"
-                                                            width="100px"
-                                                            height="100px"
-                                                            class="img-circle"/>
-                                                </a>
-                                            </div>
-                                            <div align="center" style="font-size: 22px; margin-top: 5px;">
-                                                <b><a href="/view_profile?user_id={{$worker->user_id}}" style="color: black">{{$worker->display_name}}</a></b>
-                                                <br>
-                                                <p style="font-size: 18px">{{$user_subroles[$subrole_idx]}}
-                                                    ({{$user_games[$subrole_idx]}})</p>
-                                                @php $subrole_idx++; @endphp
-                                            </div>
+                                        <div class="col-md-4 text-center">
+                                            <div class="work-inner">
+                                                @if(!is_null($worker->profile_picture))
+                                                    <a href="/view_profile?user_id={{$worker->user_id}}"
+                                                       class="work-grid"
+                                                       style="background-image: url(/images/profile_picture/{{$worker->profile_picture}});"></a>
+                                                @else
+                                                    <a href="/view_profile?user_id={{$worker->user_id}}"
+                                                       class="work-grid"
+                                                       style="background-image: url(/images/default_event_img.png); background-size: contain; background-repeat: no-repeat;"></a>
+                                                @endif
 
+                                                <div class="desc">
+                                                    <h3>
+                                                        <a href="/view_profile?user_id={{$worker->user_id}}">{{$worker->display_name}}</a> @if($worker->gender == "m")
+                                                            <span><img src="images/ic_male.png" width="20px"
+                                                                       height="20px"
+                                                                       data-toggle="tooltip"
+                                                                       title="Male"/> </span> @elseif($worker->gender == "f")
+                                                            <span><img src="images/ic_female.png" width="20px"
+                                                                       height="20px"
+                                                                       data-toggle="tooltip"
+                                                                       title="Female"/> </span>@endif
+                                                    </h3>
+                                                    <p>@if(!is_null($worker->city)){{$worker->city." -
+                                                        "}}@endif @if(!is_null($worker->age)) {{$worker->age}} Years
+                                                        Old @endif </p>
+
+                                                    <div style="margin-top: -20px">({{$user_subroles[$subrole_idx]}})
+                                                    </div>
+                                                    @php $subrole_idx++; @endphp
+                                                </div>
+                                            </div>
                                         </div>
                                         @break
                                     @endif
@@ -82,51 +102,66 @@
     </table>
 </div>
 
-<div id="registered_list">
+<div id="registered_list" style="display: none">
     <table style="margin: 1%;">
         <tr>
             <td>
                 <div class="container">
                     <div class="row">
                         @foreach($vacancy_managements as $vacancy_management)
-
                             @if($vacancy_management->action == "Register")
-
                                 @foreach($workers as $worker)
                                     @if($worker->id == $vacancy_management->worker_id)
-                                        <div class="col-md-4"
-                                             style="background-color: #eaffea; border-radius: 5px; border: 1px outset #18253d;width: 250px; height: 350px;margin: 1%; padding: 1%">
-                                            <div align="center" style="margin-top: 30px">
-                                                <a href="/view_profile?user_id={{$worker->user_id}}"><img src="/images/sample_profile_picture_1.jpg" width="100px"
-                                                     height="100px"
-                                                     class="img-circle"/>
-                                                </a>
-                                            </div>
-                                            <div align="center" style="font-size: 22px; margin-top: 5px;">
-                                                <b><a href="/view_profile?user_id={{$worker->user_id}}" style="color: black">{{$worker->display_name}}</a></b>
-                                                <br>
-                                                <p style="font-size: 18px">{{$user_subroles[$subrole_idx]}}</p>
-                                                @php $subrole_idx++; @endphp
-                                            </div>
-                                            <div style="position: absolute; bottom: 0; margin-left: 10px; margin-bottom: 10px">
-                                                <form method="post" action="vacancy_status">
-                                                    {{csrf_field()}}
+                                        <div class="col-md-4 text-center">
+                                            <div class="work-inner">
+                                                @if(!is_null($worker->profile_picture))
+                                                    <a href="/view_profile?user_id={{$worker->user_id}}"
+                                                       class="work-grid"
+                                                       style="background-image: url(/images/profile_picture/{{$worker->profile_picture}});"></a>
+                                                @else
+                                                    <a href="/view_profile?user_id={{$worker->user_id}}"
+                                                       class="work-grid"
+                                                       style="background-image: url(/images/default_event_img.png); background-size: contain; background-repeat: no-repeat;"></a>
+                                                @endif
 
-                                                    <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                                                    <input type="hidden" name="event_information"
-                                                           value="{{$event_information}}"/>
-                                                    <input type="hidden" name="worker_id" value="{{$worker->id}}"/>
-                                                    <input type="hidden" name="subrole_id"
-                                                           value="{{$vacancy_management->subrole_id}}"/>
-                                                    <button type="submit" class="btn btn-primary" style="width: 100px"
-                                                            name="action" value="Confirm">
-                                                        <b>Confirm</b>
-                                                    </button>
-                                                    <button type="submit" class="btn btn-primary"
-                                                            style="background-color: darkred; width: 100px;"
-                                                            name="action" value="Decline"><b>Decline</b>
-                                                    </button>
-                                                </form>
+                                                <div class="desc">
+                                                    <h3>
+                                                        <a href="/view_profile?user_id={{$worker->user_id}}">{{$worker->display_name}}</a> @if($worker->gender == "m")
+                                                            <span><img src="images/ic_male.png" width="20px"
+                                                                       height="20px"
+                                                                       data-toggle="tooltip"
+                                                                       title="Male"/> </span> @elseif($worker->gender == "f")
+                                                            <span><img src="images/ic_female.png" width="20px"
+                                                                       height="20px"
+                                                                       data-toggle="tooltip"
+                                                                       title="Female"/> </span>@endif
+                                                    </h3>
+                                                    <p>@if(!is_null($worker->city)){{$worker->city." -
+                                                        "}}@endif @if(!is_null($worker->age)) {{$worker->age}} Years
+                                                        Old @endif </p>
+
+                                                    <div style="margin-top: -20px">({{$user_subroles[$subrole_idx]}})
+                                                    </div>
+                                                    @php $subrole_idx++; @endphp
+
+                                                    <div class="row" style="margin-top: 20px">
+                                                        <div class="col-md-6">
+                                                            <button class="btn btn-primary"
+                                                                    style="width: 100%"
+                                                                    onclick="showModal('Confirm', {{$worker->id}}, {{$vacancy_management->subrole_id}})"
+                                                            data-toggle="modal" data-target="#inviteModal">
+                                                                <b>Confirm</b>
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <button class="btn btn-danger"
+                                                                    style="width: 100%;"
+                                                                    onclick="showModal('Decline', {{$worker->id}}, {{$vacancy_management->subrole_id}})" data-toggle="modal" data-target="#inviteModal">
+                                                                <b>Decline</b>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         @break
@@ -151,21 +186,39 @@
                             @if($vacancy_management->action == "Confirm")
                                 @foreach($workers as $worker)
                                     @if($worker->id == $vacancy_management->worker_id)
-                                        <div class="col-md-4"
-                                             style="background-color: #eaffea; border-radius: 5px; border: 1px outset #18253d;width: 250px; height: 250px;margin: 1%; padding: 1%">
-                                            <div align="center" style="margin-top: 30px">
-                                                <a href="/view_profile?user_id={{$worker->user_id}}"><img src="/images/sample_profile_picture_1.jpg" width="100px"
-                                                     height="100px"
-                                                     class="img-circle"/>
-                                                </a>
-                                            </div>
-                                            <div align="center" style="font-size: 22px; margin-top: 5px;">
-                                                <b><a href="/view_profile?user_id={{$worker->user_id}}" style="color: black">{{$worker->display_name}}</a></b>
-                                                <br>
-                                                <p style="font-size: 18px">{{$user_subroles[$subrole_idx]}}</p>
-                                                @php $subrole_idx++; @endphp
-                                            </div>
+                                        <div class="col-md-4 text-center">
+                                            <div class="work-inner">
+                                                @if(!is_null($worker->profile_picture))
+                                                    <a href="/view_profile?user_id={{$worker->user_id}}"
+                                                       class="work-grid"
+                                                       style="background-image: url(/images/profile_picture/{{$worker->profile_picture}});"></a>
+                                                @else
+                                                    <a href="/view_profile?user_id={{$worker->user_id}}"
+                                                       class="work-grid"
+                                                       style="background-image: url(/images/default_event_img.png); background-size: contain; background-repeat: no-repeat;"></a>
+                                                @endif
 
+                                                <div class="desc">
+                                                    <h3>
+                                                        <a href="/view_profile?user_id={{$worker->user_id}}">{{$worker->display_name}}</a> @if($worker->gender == "m")
+                                                            <span><img src="images/ic_male.png" width="20px"
+                                                                       height="20px"
+                                                                       data-toggle="tooltip"
+                                                                       title="Male"/> </span> @elseif($worker->gender == "f")
+                                                            <span><img src="images/ic_female.png" width="20px"
+                                                                       height="20px"
+                                                                       data-toggle="tooltip"
+                                                                       title="Female"/> </span>@endif
+                                                    </h3>
+                                                    <p>@if(!is_null($worker->city)){{$worker->city." -
+                                                        "}}@endif @if(!is_null($worker->age)) {{$worker->age}} Years
+                                                        Old @endif </p>
+
+                                                    <div style="margin-top: -20px">({{$user_subroles[$subrole_idx]}})
+                                                    </div>
+                                                    @php $subrole_idx++; @endphp
+                                                </div>
+                                            </div>
                                         </div>
                                         @break
                                     @endif
@@ -189,21 +242,39 @@
                             @if($vacancy_management->action == "Decline")
                                 @foreach($workers as $worker)
                                     @if($worker->id == $vacancy_management->worker_id)
-                                        <div class="col-md-4"
-                                             style="background-color: #eaffea; border-radius: 5px; border: 1px outset #18253d;width: 250px; height: 250px;margin: 1%; padding: 1%">
-                                            <div align="center" style="margin-top: 30px">
-                                                <a href="/view_profile?user_id={{$worker->user_id}}"><img src="/images/sample_profile_picture_1.jpg" width="100px"
-                                                     height="100px"
-                                                     class="img-circle"/>
-                                                </a>
-                                            </div>
-                                            <div align="center" style="font-size: 22px; margin-top: 5px;">
-                                                <b><a href="/view_profile?user_id={{$worker->user_id}}" style="color: black">{{$worker->display_name}}</a></b>
-                                                <br>
-                                                <p style="font-size: 18px">{{$user_subroles[$subrole_idx]}}</p>
-                                                @php $subrole_idx++; @endphp
-                                            </div>
+                                        <div class="col-md-4 text-center">
+                                            <div class="work-inner">
+                                                @if(!is_null($worker->profile_picture))
+                                                    <a href="/view_profile?user_id={{$worker->user_id}}"
+                                                       class="work-grid"
+                                                       style="background-image: url(/images/profile_picture/{{$worker->profile_picture}});"></a>
+                                                @else
+                                                    <a href="/view_profile?user_id={{$worker->user_id}}"
+                                                       class="work-grid"
+                                                       style="background-image: url(/images/default_event_img.png); background-size: contain; background-repeat: no-repeat;"></a>
+                                                @endif
 
+                                                <div class="desc">
+                                                    <h3>
+                                                        <a href="/view_profile?user_id={{$worker->user_id}}">{{$worker->display_name}}</a> @if($worker->gender == "m")
+                                                            <span><img src="images/ic_male.png" width="20px"
+                                                                       height="20px"
+                                                                       data-toggle="tooltip"
+                                                                       title="Male"/> </span> @elseif($worker->gender == "f")
+                                                            <span><img src="images/ic_female.png" width="20px"
+                                                                       height="20px"
+                                                                       data-toggle="tooltip"
+                                                                       title="Female"/> </span>@endif
+                                                    </h3>
+                                                    <p>@if(!is_null($worker->city)){{$worker->city." -
+                                                        "}}@endif @if(!is_null($worker->age)) {{$worker->age}} Years
+                                                        Old @endif </p>
+
+                                                    <div style="margin-top: -20px">({{$user_subroles[$subrole_idx]}})
+                                                    </div>
+                                                    @php $subrole_idx++; @endphp
+                                                </div>
+                                            </div>
                                         </div>
                                         @break
                                     @endif
@@ -216,6 +287,42 @@
             </td>
         </tr>
     </table>
+</div>
+
+<!-- Optional Message when Confirming/Declining MODAL-->
+<div class="container">
+    <div class="modal fade" id="inviteModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Optional Message</h4>
+                </div>
+                <form action="vacancy_status" method="post">
+                    <div class="modal-body">
+                        {{csrf_field()}}
+                        <div class="form-group" style="margin-top: 5px">
+                            <b><label>Message (Optional)</label></b><br>
+                            <textarea class="form-control" rows="5" placeholder="Type here..."
+                                      name="message"></textarea>
+                        </div>
+                        <input type="hidden" name="event_id" value="{{$event_id}}"/>
+                        <input type="hidden" name="worker_id" id="worker_id"/>
+                        <input type="hidden" name="subrole_id"
+                               id="subrole_id"/>
+                        <input type="hidden" name="action"
+                               id="action"/>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default" id="action_btn"></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

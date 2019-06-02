@@ -13,6 +13,12 @@
             }
         }
     </script>
+
+    @include('nav_header')
+
+    <script>
+        $("#fh5co-page").hide();
+    </script>
 </head>
 
 <body>
@@ -28,6 +34,29 @@
             <i class="glyphicon glyphicon-user"></i>
             <input type="text" class="form-control" placeholder="Type here..." name="display_name" required/>
         </div>
+    </div>
+
+    <div class="form-group">
+        <b><label>Gender</label></b><br>
+        <div class="container-fluid">
+            <div class="col-sm-4"><input type="radio" name="gender" value="m">Male</div>
+            <div class="col-sm-4"><input type="radio" name="gender" value="f">Female</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <b><label>Date of Birth</label></b>
+        <div class="inner-addon left-addon">
+            <i class="glyphicon glyphicon-calendar"></i>
+            <input type="date" class="form-control" name="dob"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <b><label>City</label></b><br>
+        <select class="city form-control" name="city_id" id="mySelect2"
+                style="width: 100%">
+        </select>
     </div>
 
     <div class="form-group">
@@ -61,7 +90,7 @@
     <input type="hidden" name="role_name" value="{{$role->name}}"/>
 
     <div class="form-group has-feedback">
-        <button type="submit" class="form-control btn btn-primary"><b>Register</b></button>
+        <button type="submit" class="btn btn-primary" style="margin-top: 20px"><b>Register</b></button>
     </div>
 </form>
 
@@ -71,6 +100,26 @@
         placeholder: 'Type its Name',
         ajax: {
             url: '/search_game',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            text: item.name,
+                            id: item.id
+                        }
+                    })
+                };
+            },
+            cache: true
+        }
+    });
+
+    $('.city').select2({
+        placeholder: 'Type here...',
+        ajax: {
+            url: '/search_city',
             dataType: 'json',
             delay: 250,
             processResults: function (data) {

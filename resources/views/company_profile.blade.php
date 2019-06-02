@@ -58,7 +58,7 @@
     <input type="hidden" name="company_id" value="{{$company->id}}"/>
 
     <div class="form-group has-feedback">
-        <button type="submit" class="form-control btn btn-primary" style="margin-top: 30px"><b>Save</b></button>
+        <button type="submit" class="btn btn-primary" style="margin-top: 30px"><b>Save</b></button>
     </div>
 
 

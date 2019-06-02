@@ -104,7 +104,7 @@
 
     <div class="form-group">
         <b><label>Event Details</label></b>
-        <textarea class="form-control" rows="5" placeholder="Type here..." name="details">{{$event->details}}</textarea>
+        <textarea class="form-control" rows="5" placeholder="Type here..." name="details" style="background-color: white">{{$event->details}}</textarea>
     </div>
 
     <div class="form-group">
@@ -119,13 +119,13 @@
         @endif
         <br><b><label>Update Brochure</label></b><br>
         <input type="file" name="brochure" id="fileToUpload">
-        <button class="btn btn-danger" style="width: 20%; margin-top: 1%; display: none" id="remove_brochure_btn"
+        <button class="btn btn-danger" style="width: fit-content; display: none" id="remove_brochure_btn"
                 onclick="removeBrochure()"><b>Remove Brochure</b></button>
     </div>
 
     <input type="hidden" name="event_id" value="{{$event->id}}"/>
 
-    <button class="form-control btn btn-primary"><b>Update</b></button>
+    <button class="btn btn-primary"><b>Update</b></button>
 </form>
 
 
@@ -173,6 +173,11 @@
     });
 </script>
 
+<style>
+    input[type= text], input[type= date] {
+        background-color: white;
+    }
+</style>
 
 </body>
 </html>

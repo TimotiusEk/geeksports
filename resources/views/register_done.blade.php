@@ -2,6 +2,12 @@
 <head>
     <?php include 'php/required_css.php'; ?>
     <?php include 'php/required_js.php'; ?>
+
+    @include('nav_header')
+
+    <script>
+        $("#fh5co-page").hide();
+    </script>
 </head>
 <body>
 <form action="/">

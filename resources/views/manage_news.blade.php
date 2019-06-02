@@ -91,6 +91,17 @@
                 width: 100%;
             }
         }
+
+        .nav-pills > li.active > a, .nav-pills > li.active > a:focus {
+            color: white;
+            background-color: #1FB57B;
+        }
+
+        .nav-pills > li.active > a:hover {
+            background-color: #1FB57B;
+            color: white;
+        }
+
     </style>
 
     <script>
@@ -114,14 +125,19 @@
 <div class="container-fluid" style="margin-right: -10px; margin-bottom: 20px">
     <div class="row" style="background-color: white; width: 98%; padding: 1%; margin: 1%; border-radius: 10px;">
         <div class="col-md-4 text-center">
-            <img style=" height: 225px; width: 400px; border-radius: 10px;"
-                 src="/images/event_brochure/{{$event->brochure}}"/>
+            @if(!is_null($event->brochure))
+                <img style=" height: 225px; width: 400px; border-radius: 10px;"
+                     src="/images/event_brochure/{{$event->brochure}}"/>
+            @else
+                <img style=" height: 225px; width: 400px; border-radius: 10px;"
+                     src="/images/default_event_img.png"/>
+            @endif
         </div>
         <div class="col-md-8" style="font-size: 40px; vertical-align: top;">
             <div style="margin-left: 70px">
-                <p style="margin-top: 10px; margin-left: -30px;">
+                <p style="margin-top: 10px">
                     <b>
-                        <a href="event_details?event_id={{$event->id}}" style="color: black">{{$event->name}}</a>
+                        <a href="event_details?event_id={{$event->id}}" style="color: black; font-size: 30px">{{$event->name}}</a>
                     </b>
                 </p>
                 <hr>
@@ -182,8 +198,10 @@
         </ul>
     </div>
 
-    <div class="row" style="width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%; background-color:  white">
-        <h1 align="center" style="margin-top: 5%; margin-bottom: 5%" id="no_news"><b>No News is Drafted or Published</b></h1>
+    <div class="row"
+         style="width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%; background-color:  white">
+        <h1 align="center" style="margin-top: 5%; margin-bottom: 5%" id="no_news"><b>No News is Drafted or Published</b>
+        </h1>
 
         <form action="write_news" method="post">
             {{csrf_field()}}
@@ -196,21 +214,24 @@
         </form>
     </div>
 
-    <div class="row" style="width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%; background-color:  white" align="right">
+    <div class="row"
+         style="width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%; background-color:  white"
+         align="right">
 
-            <form action="write_news" method="post">
-                {{csrf_field()}}
-                <input type="hidden" name="event_id" value="{{$event_id}}"/>
+        <form action="write_news" method="post">
+            {{csrf_field()}}
+            <input type="hidden" name="event_id" value="{{$event_id}}"/>
 
-                <button type="submit" class="form-control btn btn-primary"
-                        style="width: fit-content; padding-left: 30px; padding-right: 30px; display: none"
-                        id="write_news_btn">
-                    <b>Write News</b></button>
-            </form>
+            <button type="submit" class="btn btn-primary"
+                    style="width: fit-content; padding-left: 30px; padding-right: 30px; display: none"
+                    id="write_news_btn">
+                <b>Write News</b></button>
+        </form>
 
     </div>
 
-    <div class = "row" id="datatable" style="display: none; width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%; background-color:  white">
+    <div class="row" id="datatable"
+         style="display: none; width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%; background-color:  white">
         <table id="table_id" class="cell-border table-bordered">
             <thead>
             <tr>
@@ -252,7 +273,8 @@
                             <a href="#myModal"
                                onclick="showModal('{{$event_information}}', '{{$event_id}}', '{{($news[$idx])->title}}', '{{($news[$idx])->id}}')"
                                data-toggle="modal"><img src="/images/ic_delete.png"
-                                                        style="width: 65px; height: 45px; margin-bottom: 10px;"/></a><br>
+                                                        style="width: 65px; height: 45px; margin-bottom: 10px;"/></a>
+                            <br>
 
                             <form action="publish_news" method="post">
                                 {{csrf_field()}}
@@ -275,7 +297,6 @@
         </table>
     </div>
 </div>
-
 
 
 <!-- Delete Vacancy MODAL -->

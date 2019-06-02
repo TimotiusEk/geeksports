@@ -2,6 +2,11 @@
 <head>
     <?php include 'php/required_css.php'; ?>
     <?php include 'php/required_js.php'; ?>
+    @include('nav_header')
+
+    <script>
+        $("#fh5co-page").hide();
+    </script>
 </head>
 <body>
 
@@ -24,7 +29,6 @@
     </div>
 
 
-
     <div class="form-group">
         <b><label>Company Name (Optional)</label></b>
         <div class="inner-addon left-addon">
@@ -40,8 +44,7 @@
     <input type="hidden" name="role_name" value="{{$role->name}}"/>
 
     <div class="form-group has-feedback">
-        <button type="submit" class="form-control btn btn-primary"><b>Next Step <span
-                        class="glyphicon glyphicon-btn glyphicon-arrow-right form-control-feedback"></span></b></button>
+        <button type="submit" class="btn btn-primary" style="margin-top: 20px"><b>Register</b></button>
     </div>
 </form>
 </body>

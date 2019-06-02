@@ -6,18 +6,6 @@
     @include('nav_header')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
     <script>
-        $(function () {
-            $("#others").on('change', function (e) {
-                if ($(this).is(':checked')) {
-                    $("#others-textbox").show();
-                } else {
-                    $("#others-textbox").hide();
-                }
-            });
-        });
-
-        document.getElementById("create_event").className = 'active';
-
         function validateForm() {
             var allowedFiles = [".png", ".jpg", ".jpeg"];
             var form_valid = document.getElementById("fileToUpload");
@@ -105,14 +93,14 @@
     <div class="form-group">
         <b><label>Upload Brochure (Optional)</label></b><br>
         <input type="file" name="brochure" id="fileToUpload">
-        <button class="btn btn-danger" style="width: 20%; margin-top: 1%; display: none" id="remove_brochure_btn"
+        <button class="btn btn-danger" style="width: fit-content; margin-top: 1%; display: none" id="remove_brochure_btn"
                 onclick="removeBrochure()"><b>Cancel</b></button>
     </div>
 
     <input type="hidden" name="status"/>
 
-    <button class="form-control btn btn-primary" style="margin-top: 10px;margin-bottom: 10px" name="status" value="Draft"><b>Save in Draft</b></button>
-    <button class="form-control btn btn-primary" name="status" value="Published"><b>Publish</b></button>
+    <button class="btn btn-primary" style="margin-top: 10px;margin-bottom: 10px" name="status" value="Draft"><b>Save in Draft</b></button>
+    <button class="btn btn-primary" name="status" value="Published"><b>Publish</b></button>
 </form>
 
 

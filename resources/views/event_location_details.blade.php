@@ -123,17 +123,15 @@
 <body style="background-color: whitesmoke">
 
 <div class="container">
-    <div class="row" style="background-color: white; border-radius: 10px">
+    <div class="row" style="background-color: white; border-radius: 10px; margin-top: 2%">
         <div class="col-md-3 text-center"><img
                     style="height: 150px; width: 225px;margin-top: 15px; padding-top: 45px; padding-left: 30px"
                     src="/images/sample_event_location_logo_1.png"/></div>
         <div class="col-md-9" style="font-size: 40px; vertical-align: top;">
             <div style="margin-left: 70px">
-                <p style="margin-top: 20px; margin-left: -30px;">
-                    <b>
-                        <a href="#">
-                            {{$event_location->name}}
-                        </a>
+                <p style="margin-top: 20px;">
+                    <b style="color: black; font-size: 30px">
+                        {{$event_location->name}}
                     </b>
                 </p>
                 <hr>
@@ -156,7 +154,7 @@
 
     @if(count($event_location_media) != 0)
         <div class="row" style="background-color: white; margin-top: 30px; border-radius: 10px; padding: 2%;">
-            <p style="margin-top: 20px; margin-left: 10px; font-size: 40px;"><b>Media</b></p>
+            <p style="margin-top: 20px; margin-left: 10px; font-size: 30px; color: black"><b>Media</b></p>
             <hr style="width: 95%">
 
             @foreach($event_location_media as $media)

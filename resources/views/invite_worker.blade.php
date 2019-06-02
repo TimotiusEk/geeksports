@@ -25,6 +25,16 @@
         @endif
     @endif
 
+    @if(!is_null($gender))
+        @if($gender == "Male")
+            <input type="hidden" name="gender" value="m"/>
+        @else
+            <input type="hidden" name="gender" value="f"/>
+        @endif
+    @endif
+
+    <input type="hidden" name="city_id" value="{{$city_id}}"/>
+
     @if($keyword != "")
         <input type="hidden" name="keyword" value="{{$keyword}}"/>
     @endif

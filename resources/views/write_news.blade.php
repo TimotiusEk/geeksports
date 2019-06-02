@@ -70,9 +70,9 @@
         <input type="hidden" name="event_id" value="{{$event_id}}"/>
 
     @endif
-    <button type="submit" class="form-control btn btn-primary" style="margin-top: 3%" name="status" value="Draft"><b>Save
+    <button type="submit" class="btn btn-primary" style="margin-top: 3%" name="status" value="Draft"><b>Save
             as Draft</b></button>
-    <button type="submit" class="form-control btn btn-primary" style="margin-top: 1%" name="status" value="Published">
+    <button type="submit" class="btn btn-primary" style="margin-top: 1%" name="status" value="Published">
         <b>Publish</b></button>
 </form>
 

@@ -12,22 +12,55 @@
 
         $(document).ready(function () {
             $("#common").attr("disabled", "disabled");
+
+            var allRadios = document.getElementsByName('gender');
+            var booRadio;
+            var x = 0;
+            for(x = 0; x < allRadios.length; x++){
+                allRadios[x].onclick = function() {
+                    if(booRadio == this){
+                        this.checked = false;
+                        booRadio = null;
+                    } else {
+                        booRadio = this;
+                    }
+                };
+            }
         });
+
+
     </script>
+
+    <style>
+        .nav-pills > li.active > a, .nav-pills > li.active > a:focus {
+            color: white;
+            background-color: #1FB57B;
+        }
+
+        .nav-pills > li.active > a:hover {
+            background-color: #1FB57B;
+            color: white;
+        }
+    </style>
 </head>
 <body style="background-color: whitesmoke">
 
 <div class="container-fluid">
     <div class="row" style="background-color: white; width: 98%; padding: 1%; margin: 1%; border-radius: 10px;">
         <div class="col-md-4 text-center">
-            <img style=" height: 225px; width: 400px; border-radius: 10px;"
-                 src="/images/event_brochure/{{$event->brochure}}"/>
+            @if(!is_null($event->brochure))
+                <img style=" height: 225px; width: 400px; border-radius: 10px;"
+                     src="/images/event_brochure/{{$event->brochure}}"/>
+            @else
+                <img style=" height: 225px; width: 400px; border-radius: 10px;"
+                     src="/images/default_event_img.png"/>
+            @endif
         </div>
         <div class="col-md-8" style="font-size: 40px; vertical-align: top;">
             <div style="margin-left: 70px">
-                <p style="margin-top: 10px; margin-left: -30px;">
+                <p style="margin-top: 10px">
                     <b>
-                        <a href="event_details?event_id={{$event->id}}" style="color: black">{{$event->name}}</a>
+                        <a href="event_details?event_id={{$event->id}}" style="color: black; font-size: 30px">{{$event->name}}</a>
                     </b>
                 </p>
                 <hr>
@@ -102,12 +135,12 @@
             <form action="vacancy_status" method="post" style="float: right">
                 {{csrf_field()}}
                 <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                <button type="submit" class="form-control btn btn-primary"
+                <button type="submit" class="btn btn-primary"
                         style="padding-left: 30px; padding-right: 30px; display: none; width: fit-content; margin-left: 10px"
                         id="show_vacancy_status_btn"><b>Vacancy Status</b></button>
             </form>
 
-            <button type="submit" class="form-control btn btn-primary"
+            <button type="submit" class="btn btn-primary"
                     style="padding-left: 30px; padding-right: 30px; width: fit-content; float: right;"
                     data-toggle="modal" data-target="#searchWorkerModal"><b>Search Worker</b></button>
         </div>
@@ -224,6 +257,19 @@
                         </div>
 
                         <div class="form-group">
+                            <b><label>Gender</label></b><br>
+                            <div class="col-sm-4"><input type="radio" name="gender" value="m">Male</div>
+                            <div class="col-sm-4"><input type="radio" name="gender" value="f">Female</div>
+                        </div><br>
+
+                        <div class="form-group">
+                            <b><label>City</label></b><br>
+                            <select class="city form-control" name="city_id" id="mySelect2"
+                                    style="width: 100%">
+                            </select>
+                        </div>
+
+                        <div class="form-group">
                             <b><label>Keyword</label></b><br>
                             <input type="text" class="form-control" placeholder="Type your keyword (Optional)"
                                    name="keyword">
@@ -276,9 +322,29 @@
     ?>
 
     $('.cari').select2({
-        placeholder: 'Type its Name',
+        placeholder: 'Type here...',
         ajax: {
             url: '/search_game',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            text: item.name,
+                            id: item.id
+                        }
+                    })
+                };
+            },
+            cache: true
+        }
+    });
+
+    $('.city').select2({
+        placeholder: 'Type here...',
+        ajax: {
+            url: '/search_city',
             dataType: 'json',
             delay: 250,
             processResults: function (data) {

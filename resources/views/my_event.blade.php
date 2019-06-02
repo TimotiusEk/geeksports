@@ -123,16 +123,24 @@
     </tr>
     </thead>
     <tbody>
-
+    <div align="right" style="margin: 1%">
+    <a href="/create_event"><input type="button" class="btn btn-primary" value="Create Event"/></a>
+    </div>
     @for($idx = 0 ; $idx < count($events) ; $idx++)
         <tr>
             <td id="event_name_{{$idx + 1}}">
                 <div class="container"
                      style="background-color: white; border-radius: 10px; border-color: #491217; width: 100%;">
                     <div class="row">
-                        <div class="col-md-3 text-center"><img
-                                    style=" height: 230px; width: 320px; border-radius: 10px; margin-left: -5px; margin-top: 35px;"
-                                    src="/images/event_brochure/{{($events[$idx])->brochure}}"/></div>
+                        <div class="col-md-3 text-center">
+                            @if(!is_null(($events[$idx])->brochure))
+                            <img style=" height: 230px; width: 320px; border-radius: 10px; margin-left: -5px; margin-top: 35px;"
+                                    src="/images/event_brochure/{{($events[$idx])->brochure}}"/>
+                            @else
+                                <img style=" height: 230px; width: 320px; border-radius: 10px; margin-left: -5px; margin-top: 35px;"
+                                     src="/images/default_event_img.png"/>
+                            @endif
+                        </div>
                         <div class="col-md-9" style="font-size: 40px; vertical-align: top; padding: 3%">
                             <div style="margin-left: 70px">
 

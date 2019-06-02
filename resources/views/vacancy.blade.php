@@ -20,7 +20,7 @@
 </head>
 <body style="background-color: whitesmoke">
 
-<ul class="nav nav-tabs" style="margin-left: 15px; margin-right: 15px">
+<ul class="nav nav-tabs" style="margin-left: 15px; margin-right: 15px; margin-top: 1%">
     <li class="active" id="all" onclick="updateList(this.id)"><a>All</a></li>
     <li id="invited" onclick="updateList(this.id)"><a>Invited</a></li>
     <li id="Register" onclick="updateList(this.id)"><a>Registered</a></li>
@@ -29,7 +29,7 @@
 </ul>
 
 <div class="container"
-     style="border-color: #491217; width: 99%; margin: 1%" id="vacancies">
+     style="width: 60%; margin-top: 2%; min-width: 900px" id="vacancies">
 
 </div>
 
@@ -43,6 +43,7 @@
         $("#" + id).addClass("active");
 
         var events = <?php echo json_encode($events); ?>;
+        var event_organizers = <?php echo json_encode($event_organizers); ?>;
         var vacant_roles = <?php echo json_encode($vacant_roles); ?>;
         var city_names = <?php echo json_encode($city_names); ?>;
         var games = <?php echo json_encode($games); ?>;
@@ -51,6 +52,7 @@
 
 
         for (idx = 0; idx < events.length; idx++) {
+
             tab = id;
             var no_register_button = false;
             //tab 'all' but already registered
@@ -60,25 +62,34 @@
             }
 
 
-            if((events[idx])["status"] === "all" && !no_register_button && !((events[idx])["open_vacancy"])){
+            if ((events[idx])["status"] === "all" && !no_register_button && !((events[idx])["open_vacancy"])) {
                 console.log(((events[idx])["open_vacancy"]));
                 (events[idx])["status"] = "ignore";
             }
-
+            console.log((events[idx])["status"]);
             if ((events[idx])["status"] === id) {
 
+                console.log(id);
                 if (no_register_button) {
                     tab = "all_registered";
                 }
 
 
                 content += '<div class="row" style="margin-bottom: 15px; background-color: white; border-radius: 10px; padding-bottom: 1%">' +
-                    '            <div class="col-md-4 text-center"><img' +
-                    '                        style=" height: 225px; width: 400px; border-radius: 10px; margin-left: -5px; margin-top: 15px; "' +
-                    '                        src="/images/event_brochure/' + (events[idx])["brochure"] + '"/></div>' +
-                    '            <div class="col-md-8" style="font-size: 40px; vertical-align: top;">' +
+                    '            <div class="col-md-5 text-center">';
+
+                if ((events[idx])["brochure"] != null) {
+                    content += '                        <img style=" height: 225px; width: 400px; border-radius: 10px; margin-left: -5px; margin-top: 15px; "' +
+                    '                        src="/images/event_brochure/' + (events[idx])["brochure"] + '"/>';
+                } else {
+                    content += '                        <img style=" height: 225px; width: 400px; border-radius: 10px; margin-left: -5px; margin-top: 15px; "' +
+                        '                        src="/images/default_event_img.png"/>';
+                }
+
+                content += '            </div><div class="col-md-7" style="font-size: 40px; vertical-align: top;">' +
                     '                <div style="margin-left: 70px">' +
-                    '                    <p style="margin-top: 20px; margin-left: -30px;"><b><a href="/event_details?event_id=ev' + (events[idx])["id"] + '">' + (events[idx])["name"] + '</a></b></p>';
+                    '                    <p style="margin-top: 20px;"><b><a href="/event_details?event_id=' + (events[idx])["id"] + '" style="color: black; font-size: 30px">' + (events[idx])["name"] + '</a></b></p>'+
+                        '<p style="margin-top: -20px">By: <a href="view_profile?user_id=' + (event_organizers[idx])["user_id"] + '">' + (event_organizers[idx])["display_name"] +'</a></p>';
                 if ((tab === "all" || tab === "invited")) {
                     content += '                    <form action="vacancy_registration_form" method="GET" style="margin-top: -60px">' +
                         '                        <input type="hidden" name="event_id" value="' + (events[idx])["id"] + '"/>' +

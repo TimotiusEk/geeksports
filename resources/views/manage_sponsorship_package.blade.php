@@ -29,6 +29,16 @@
         pre {
             white-space: pre-wrap;
         }
+
+        .nav-pills > li.active > a, .nav-pills > li.active > a:focus {
+            color: white;
+            background-color: #1FB57B;
+        }
+
+        .nav-pills > li.active > a:hover {
+            background-color: #1FB57B;
+            color: white;
+        }
     </style>
 
 </head>
@@ -41,14 +51,19 @@
 <div class="container-fluid">
     <div class="row" style="background-color: white; width: 98%; padding: 1%; margin: 1%; border-radius: 10px;">
         <div class="col-md-4 text-center">
-            <img style=" height: 225px; width: 400px; border-radius: 10px;"
-                 src="/images/event_brochure/{{$event->brochure}}"/>
+            @if(!is_null($event->brochure))
+                <img style=" height: 225px; width: 400px; border-radius: 10px;"
+                     src="/images/event_brochure/{{$event->brochure}}"/>
+            @else
+                <img style=" height: 225px; width: 400px; border-radius: 10px;"
+                     src="/images/default_event_img.png"/>
+            @endif
         </div>
         <div class="col-md-8" style="font-size: 40px; vertical-align: top;">
             <div style="margin-left: 70px">
-                <p style="margin-top: 10px; margin-left: -30px;">
+                <p style="margin-top: 10px; ">
                     <b>
-                        <a href="event_details?event_id={{$event->id}}" style="color: black">{{$event->name}}</a>
+                        <a href="event_details?event_id={{$event->id}}" style="color: black; font-size: 30px">{{$event->name}}</a>
                     </b>
                 </p>
                 <hr>
@@ -109,39 +124,26 @@
         </ul>
     </div>
 
-    <div class="row" id="no_package" style="width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%; padding-top: 1%; background-color: white">
-        <h1 align="center" style="margin-top: 5%; margin-bottom: 5%"><b>There is no Sponsorship Package for This
-                Event</b></h1>
-
-        <form action="add_package" method="post" align="right">
-            {{csrf_field()}}
-
-            <input type="hidden" name="event_id" value="{{$event_id}}"/>
-            <a href="#" onclick="$(this).closest('form').submit()"><img src="/images/ic_add_package.png"
-                                                                        style="width: 160px;"></a>
-        </form>
-    </div>
-
     <div class="row"
-         style="width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%; padding-top: 1%; background-color: white; display: none" id="hidden_if_package_is_null">
+         style="width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%; padding-top: 1%; background-color: white;">
             <span style="float: right;">
             <form action="add_package" method="post"
                   style="width: 166px;">
                 {{csrf_field()}}
 
                 <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                <button type="submit" class="form-control btn btn-primary"
+                <button type="submit" class="btn btn-primary"
                         style="padding-left: 30px; padding-right: 30px;"><b>Add Package</b></button>
             </form>
                 </span>
 
-            <span style="float: right; margin-right: 10px">
+        <span style="float: right; margin-right: 10px">
                 <form action="sponsor_status" method="post">
                 {{csrf_field()}}
 
 
-                <input type="hidden" name="event_id" value="{{$event_id}}"/>
-                <button type="submit" class="form-control btn btn-primary"
+                    <input type="hidden" name="event_id" value="{{$event_id}}"/>
+                <button type="submit" class="btn btn-primary"
                         style="padding-left: 30px; padding-right: 30px; width: fit-content; "
                         onclick="window.location.href='/sponsor_status'"><b>Sponsor
                         Status</b></button>
@@ -149,13 +151,14 @@
             </span>
 
         <span style="float: right; margin-right: 10px">
-        <button type="submit" class="form-control btn btn-primary"
+        <button type="submit" class="btn btn-primary"
                 style="padding-left: 30px; padding-right: 30px; width: fit-content"
                 id="show_sponsor_status_btn" data-toggle="modal" data-target="#searchSponsorModal"><b>Search Sponsor</b></button>
         </span>
     </div>
 
-    <div id="datatable" class="row" style="display:none; width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%; background-color: white">
+    <div id="datatable" class="row"
+         style="display:none; width: 98%; padding-left: 1%; padding-right: 1%; margin-left: 1%; margin-right: 1%; background-color: white">
         <table id="table_id" class="cell-border table-bordered responsive" style="width: 99%">
             <thead>
             <tr>
@@ -193,7 +196,7 @@
                            data-toggle="modal"><img src="/images/ic_delete.png" style="width: 65px; height: 45px;"/><br></a>
                     </td>
                 </tr>
-                @endfor
+            @endfor
             </tbody>
         </table>
     </div>
